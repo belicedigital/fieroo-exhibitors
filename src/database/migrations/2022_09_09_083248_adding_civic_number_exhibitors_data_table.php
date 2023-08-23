@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddingCivicNumberExhibitorsDataTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('exhibitors_data', function(Blueprint $table) {
+            $table->string('civic_number')->after('address');
+            $table->string('receiver_civic_number')->nullable()->after('receiver_address');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('exhibitors_data', function(Blueprint $table) {
+            $table->dropColumn(['civic_number','receiver_civic_number']);
+        });
+    }
+}
