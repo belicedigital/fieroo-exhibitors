@@ -3,6 +3,9 @@
     "description": "Fieroo Exhibitors",
     "type": "library",
     "license": "EULA",
+    "require": {
+        "spatie/simple-excel": "^2.1"
+    },
     "autoload": {
         "psr-4": {
             "Fieroo\\Exhibitors\\": "src/"
