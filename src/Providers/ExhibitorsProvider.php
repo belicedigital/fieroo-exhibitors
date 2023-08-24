@@ -15,7 +15,8 @@ class ExhibitorsProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
-        $this->loadViewsFrom(__DIR__.'/../views', 'exhibitors');
+        $this->loadViewsFrom(__DIR__.'/../views/exhibitors', 'exhibitors');
+        $this->loadViewsFrom(__DIR__.'/../views/brands', 'brands');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         
