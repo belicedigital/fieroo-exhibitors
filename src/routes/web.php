@@ -1,6 +1,8 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Fieroo\Exhibitors\Controllers\ExhibitorController;
+use Fieroo\Exhibitors\Controllers\BrandsController;
+use Fieroo\Exhibitors\Controllers\CollaboratorsController;
 
 Route::get('/compile-data', [ExhibitorController::class, 'compileData'])->name('compile-data-after-login');
 Route::get('/pending-admission', [ExhibitorController::class, 'pendingAdmission'])->name('pending-admission');
@@ -34,4 +36,13 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web','auth']], function() {
         Route::get('/exhibitor/{id}/orders', [ExhibitorController::class, 'exportOrders']);
         // Route::get('/brands', [BrandsController::class, 'exportAll']);
     });
+
+    // Route::resource('/brands', BrandsController::class);
+    // Route::group(['prefix' => 'brand'], function() {
+    //     Route::post('/{id}/toggle-status/{field}', [BrandsController::class, 'changeStatusBrand']);
+    // });
+
+    
+    // Route::resource('/collaborators', CollaboratorsController::class);
+    // Route::get('/collaborator/{collaborator_id}/brands', [BrandsController::class, 'getCollabratorBrands']);
 });
