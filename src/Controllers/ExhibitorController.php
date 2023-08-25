@@ -407,7 +407,7 @@ class ExhibitorController extends Controller
             abort(404);
         }
 
-        return view('admin.events.recap', [
+        return view('events::recap', [
             'extra' => $extra,
             'orders' => $orders,
             'n_modules' => $n_modules,
