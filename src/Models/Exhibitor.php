@@ -5,6 +5,7 @@ namespace Fieroo\Exhibitors\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Fieroo\Exhibitors\Models\ExhibitorDetail;
+use App\Models\User;
 
 class Exhibitor extends Model
 {
@@ -20,5 +21,10 @@ class Exhibitor extends Model
     public function detail()
     {
         return $this->hasOne(ExhibitorDetail::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
