@@ -28,7 +28,7 @@
                                 <td>{{\Carbon\Carbon::parse($l->end)->format('d/m/Y')}}</td>
                                 <td>{{!userEventIsNotFurnished($user_id, $l->id, $exhibitor_data->exhibitor_id) ? trans('generals.yes') : trans('generals.no')}}</td>
                                 <td>
-                                    <a class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="{{trans('entities.order')}}" href="{{url('admin/exhibitor/'.$exhibitor_data->exhibitor_id.'/event/'.$l->id.'/recap')}}"><i class="far fa-list-alt"></i></a>
+                                    <a class="btn btn-default" data-toggle="tooltip" data-placement="top" title="{{trans('generals.recap')}}" href="{{url('admin/exhibitor/'.$exhibitor_data->exhibitor_id.'/event/'.$l->id.'/recap')}}"><i class="far fa-list-alt"></i></a>
                                 </td>
                             </tr>
                             @endforeach
