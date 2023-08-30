@@ -57,21 +57,6 @@ class CreateExhibitorsTable extends Migration
             $table->boolean('accept_stats')->default(false);
             $table->boolean('accept_marketing')->default(false);
         });
-
-        Schema::create('brands', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
-        });
-
-        Schema::create('brands_exhibitors', function(Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('exhibitor_id');
-            $table->foreign('exhibitor_id')->references('id')->on('exhibitors')->onDelete('cascade');
-            $table->unsignedBigInteger('brand_id');
-            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade');
-            $table->boolean('is_approved')->default(false);
-        });
     }
 
     /**
@@ -81,8 +66,6 @@ class CreateExhibitorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('brands_exhibitors');
-        Schema::dropIfExists('brands');
         Schema::dropIfExists('exhibitors_data');
         Schema::dropIfExists('exhibitors');
     }
