@@ -26,33 +26,6 @@
                                                 <option value="en">{{__('EN')}}</option>
                                             </select>
                                         </div>
-                                        {{--<div class="form-group">
-                                            <label for="already_download">{{__('forms.exhibitor_form.already_compiled', ['date' => date('Y') + 1])}}</label>
-                                            <select class="form-control" id="already_download" name="already_download">
-                                                <option value="no" selected>{{__('generals.no')}}</option>
-                                                <option value="yes">{{__('generals.yes')}}</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="already_expo">{{__('forms.exhibitor_form.already_expo')}}</label>
-                                            <select class="form-control" id="already_expo" name="already_expo">
-                                                <option value="no" selected>{{__('generals.no')}}</option>
-                                                <option value="yes">{{__('generals.yes')}}</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="select_brand">* {{__('forms.exhibitor_form.interested_brand')}}</label>
-                                            <select class="form-control" id="select_brand" name="select_brand" required>
-                                                <option value="">{{__('forms.select_choice')}}</option>
-                                                @foreach($stands_types as $stand_type)
-                                                <option value="{{$stand_type->stand_type_id}}">{{$stand_type->name}} ({{trans('generals.mq').' '.$stand_type->size}})</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="n_modules" class="control-label">{{__('forms.exhibitor_form.n_modules')}}</label>
-                                            <select id="n_modules" name="n_modules" class="form-control"></select>
-                                        </div>--}}
                                     </div>
                                 </div>
                                 <div class="card">
@@ -221,48 +194,9 @@
 @endsection
 @section('scripts')
 <script>
-    const resetModules = (select) => {
-        removeOptions(select)
-    }
-    const removeOptions = (select) => {
-        $.each(select.find('option'), (index, value) => {
-            $(value).remove()
-        })
-    }
-    const createModules = (select, n) => {
-        removeOptions(select)
-        for(let i = 0; i < n; i++) {
-            let opt = document.createElement('option')
-            opt.text = i + 1;
-            opt.value = i + 1;
-            select.append(opt)
-        }
-    }
     $(document).ready(function() {
         $('#diff_billing').on('change', function() {
             $('[data-billing]').toggleClass('d-none');
-        });
-        $('#select_brand').on('change', function() {
-            let value = $(this).val();
-            if(value.length > 0) {
-                common_request.post('/api/brand', {
-                    id: value
-                })
-                .then(response => {
-                    let data = response.data
-                    if(data.status) {
-                        createModules($('#n_modules'), data.object.max_number_modules);
-                    } else {
-                        toastr.error(data.message)
-                    }
-                })
-                .catch(error => {
-                    toastr.error(error)
-                    console.log(error)
-                })
-            } else {
-                resetModules($('#n_modules'))
-            }
         });
     });
 </script>

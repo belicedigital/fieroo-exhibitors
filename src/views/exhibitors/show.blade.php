@@ -24,29 +24,6 @@
                     <form>
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-6">
-                                {{--
-                                <div class="form-group">
-                                    <label for="already_expo">{{__('forms.exhibitor_form.already_expo')}}</label>
-                                    <select class="form-control" id="already_expo" name="already_expo" readonly disabled>
-                                        <option value="no"  {{ $exhibitor->already_expo == 0 ? 'selected' : '' }}>{{__('generals.no')}}</option>
-                                        <option value="yes" {{ $exhibitor->already_expo == 1 ? 'selected' : '' }}>{{__('generals.yes')}}</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="select_brand">* {{__('forms.exhibitor_form.interested_brand')}}</label>
-                                    <select class="form-control" id="select_brand" name="select_brand" readonly disabled>
-                                        <option value="">{{__('forms.select_choice')}}</option>
-                                        @foreach($stands_types as $stand_type)
-                                        <option data-price="{{$stand_type->price}}" value="{{$stand_type->stand_type_id}}" {{ $exhibitor->stand_type_id == $stand_type->stand_type_id ? 'selected' : '' }}>{{$stand_type->name}}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <input type="hidden" id="n_modules_selected" value="{{$exhibitor->n_modules}}">
-                                    <label for="n_modules">* {{__('forms.exhibitor_form.n_modules')}}</label>
-                                    <select id="n_modules" name="n_modules" class="form-control" readonly disabled>
-                                    </select>
-                                </div>--}}
                                 <div class="form-group">
                                     <label>{{__('forms.exhibitor_form.acconto.tot')}}</label>
                                     <p class="text-lg">
@@ -59,14 +36,6 @@
                                         <span id="saldo_tot"></span>
                                     </p>
                                 </div>
-                                {{--
-                                <div class="form-group">
-                                    <label>{{__('forms.exhibitor_form.tot')}}</label>
-                                    <p class="text-lg">
-                                        <span id="tot">{{ $exhibitor->stand_price * $exhibitor->n_modules }}</span>
-                                    </p>
-                                </div>
-                                --}}
                                 <div class="form-group">
                                     <label for="company">* {{__('forms.exhibitor_form.exhibitor.company.name')}}</label>
                                     <input type="text" name="company" class="form-control w-100" value="{{ $exhibitor->company }}" readonly>
@@ -210,56 +179,7 @@
 @endsection
 @section('scripts')
 <script>
-    const removeOptions = (select) => {
-        $.each(select.find('option'), (index, value) => {
-            $(value).remove()
-        })
-    }
-    const createModules = (select, n, selected) => {
-        removeOptions(select)
-        for(let i = 0; i < n; i++) {
-            let opt = document.createElement('option')
-            opt.text = i + 1;
-            opt.value = i + 1;
-            if(opt.value == selected){
-                opt.selected = true
-            }
-            select.append(opt)
-        }
-    }
-    const initModules = () => {
-        common_request.post('/api/brand', {
-            id: $('#select_brand').val()
-        })
-        .then(response => {
-            let data = response.data
-            if(data.status) {
-                let result = data.object.price * parseInt($('#n_modules_selected').val());
-                renderCalcs(result)
-                createModules($('#n_modules'), data.object.max_number_modules, $('#n_modules_selected').val());
-            } else {
-                toastr.error(data.message)
-            }
-        })
-        .catch(error => {
-            toastr.error(error)
-            console.log(error)
-        })
-    }
-    const renderCalcs = (price) => {
-        let formatPrice = parseFloat(price).toFixed(2)
-        $('#tot').text(formatPrice)
-        let acconto_price = parseFloat((price / 100) * 30).toFixed(2)
-        $('#acconto_tot').text(acconto_price)
-        let saldo_price = parseFloat(price - acconto_price).toFixed(2)
-        $('#saldo_tot').text(saldo_price)
-    }
     $(document).ready(function() {
-        /*
-        renderCalcs($('#tot').text())
-        initModules()
-        */
-
         if($('#diff_billing').val() == 'no') {
             $('[data-billing]').addClass('d-none');
         }
