@@ -1017,7 +1017,7 @@ class ExhibitorController extends Controller
         $list = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
-            ->select('exhibitors_data.*', 'users.email as email')
+            ->select('exhibitors_data.*', 'users.email as email', 'exhibitors.locale as locale')
             ->get();
             
         $to_export = [];
