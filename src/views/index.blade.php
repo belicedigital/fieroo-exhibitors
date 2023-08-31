@@ -2,11 +2,6 @@
 @section('title', trans('entities.exhibitors'))
 @section('title_header', trans('entities.exhibitors'))
 @section('buttons')
-{{--
-@if(auth()->user()->roles->first()->name == 'super-admin')
-<a href="{{url('admin/exhibitors/create')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.add')}}"><i class="fas fa-plus"></i></a>
-@endif
---}}
 <a href="{{url('admin/export/exhibitors')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.export')}}"><i class="fas fa-file-export"></i></a>
 @endsection
 @section('content')
@@ -22,14 +17,6 @@
                                 <th>{{trans('tables.company')}}</th>
                                 <th>{{trans('tables.email')}}</th>
                                 <th class="no-sort">{{trans('tables.is_admitted')}}</th>
-                                {{--
-                                <th class="no-sort">{{trans('tables.active_furnishings')}}</th>
-                                <th class="no-sort">{{trans('tables.active_catalog')}}</th>
-                                <th class="no-sort">{{trans('tables.invoice_sent')}}</th>
-                                <th class="no-sort">{{trans('tables.deposit_received')}}</th>
-                                <th class="no-sort">{{trans('tables.invoice_tot_sent')}}</th>
-                                <th class="no-sort">{{trans('tables.balance_received')}}</th>
-                                --}}
                                 <th class="no-sort">{{trans('tables.actions')}}</th>
                             </tr>
                         </thead>
@@ -114,32 +101,8 @@
                                 $this.bootstrapToggle('off', true);
                             }
                         })
-                    } /*else {
-                        let id = $(this).closest('tr').data('id')
-                        let base_url = '/admin/exhibitor/'+id+'/change/'+name.replace('_','-')
-                        common_request.post(base_url, {
-                            value: $(this).is(':checked') ? 1 : 0
-                        })
-                        .then(response => {
-                            let data = response.data
-                            if(data.status) {
-                                toastr.success(data.message)
-                                if(name == 'credentials') {
-                                    $this.attr('disabled', 'disabled')
-                                }
-                            } else {
-                                toastr.error(data.message)
-                                $this.bootstrapToggle('off', true);
-                            }
-                        })
-                        .catch(error => {
-                            toastr.error(error)
-                            console.log(error)
-                            $this.bootstrapToggle('off', true);
-                        })
-                    }*/
+                    }
                 });
-                
 
                 $('form button').on('click', function(e) {
                     var $this = $(this);
@@ -175,72 +138,6 @@
                     },
                     visible: $('input[name="visible"]').val()
                 },
-                /*
-                { 
-                    data: null,
-                    render: function(data,type,row){
-                        let is_admitted = parseInt(row['is_admitted'])
-                        let furnishings = parseInt(row['furnishings'])
-                        let close_furnishings = parseInt(row['close_furnishings'])
-                        let yes = "{{trans('generals.yes')}}"
-                        let no = "{{trans('generals.no')}}"
-                        return '<input name="furnishings" type="checkbox" ' + (furnishings ? 'checked' : '') + ' data-toggle="toggle" data-on="'+yes+'" data-off="'+no+'" data-onstyle="success" data-offstyle="danger" data-size="sm" ' + (is_admitted ? '' : 'disabled') + '>'
-                            + '<span class="ml-1 ' + (close_furnishings ? 'text-success' : '') + '"><i class="fas fa-' + (close_furnishings ? 'check' : 'times') + '-circle fa-lg"></i></span>'
-                    },
-                    visible: $('input[name="visible"]').val()
-                },
-                { 
-                    data: null,
-                    render: function(data,type,row){
-                        let is_admitted = parseInt(row['is_admitted'])
-                        let catalog = parseInt(row['catalog'])
-                        let yes = "{{trans('generals.yes')}}"
-                        let no = "{{trans('generals.no')}}"
-                        return '<input name="catalog" type="checkbox" ' + (catalog ? 'checked' : '') + ' data-toggle="toggle" data-on="'+yes+'" data-off="'+no+'" data-onstyle="success" data-offstyle="danger" data-size="sm" ' + (is_admitted ? '' : 'disabled') + '>';
-                    },
-                    visible: $('input[name="visible"]').val()
-                },
-                { 
-                    data: null,
-                    render: function(data,type,row){
-                        let is_admitted = parseInt(row['is_admitted'])
-                        let invoice_sent = parseInt(row['invoice_sent'])
-                        let yes = "{{trans('generals.yes')}}"
-                        let no = "{{trans('generals.no')}}"
-                        return '<input name="invoice_sent" type="checkbox" ' + (invoice_sent ? 'checked' : '') + ' data-toggle="toggle" data-on="'+yes+'" data-off="'+no+'" data-onstyle="success" data-offstyle="danger" data-size="sm" ' + (is_admitted ? '' : 'disabled') + '>';
-                    }
-                },
-                { 
-                    data: null,
-                    render: function(data,type,row){
-                        let is_admitted = parseInt(row['is_admitted'])
-                        let deposit_received = parseInt(row['deposit_received'])
-                        let yes = "{{trans('generals.yes')}}"
-                        let no = "{{trans('generals.no')}}"
-                        return '<input name="deposit_received" type="checkbox" ' + (deposit_received ? 'checked' : '') + ' data-toggle="toggle" data-on="'+yes+'" data-off="'+no+'" data-onstyle="success" data-offstyle="danger" data-size="sm" ' + (is_admitted ? '' : 'disabled') + '>';
-                    }
-                },
-                { 
-                    data: null,
-                    render: function(data,type,row){
-                        let is_admitted = parseInt(row['is_admitted'])
-                        let invoice_tot_sent = parseInt(row['invoice_tot_sent'])
-                        let yes = "{{trans('generals.yes')}}"
-                        let no = "{{trans('generals.no')}}"
-                        return '<input name="invoice_tot_sent" type="checkbox" ' + (invoice_tot_sent ? 'checked' : '') + ' data-toggle="toggle" data-on="'+yes+'" data-off="'+no+'" data-onstyle="success" data-offstyle="danger" data-size="sm" ' + (is_admitted ? '' : 'disabled') + '>';
-                    }
-                },
-                { 
-                    data: null,
-                    render: function(data,type,row){
-                        let is_admitted = parseInt(row['is_admitted'])
-                        let balance_received = parseInt(row['balance_received'])
-                        let yes = "{{trans('generals.yes')}}"
-                        let no = "{{trans('generals.no')}}"
-                        return '<input name="balance_received" type="checkbox" ' + (balance_received ? 'checked' : '') + ' data-toggle="toggle" data-on="'+yes+'" data-off="'+no+'" data-onstyle="success" data-offstyle="danger" data-size="sm" ' + (is_admitted ? '' : 'disabled') + '>';
-                    }
-                },
-                */
                 {
                     data: null,
                     render: function(data,type,row){

@@ -417,90 +417,6 @@ class ExhibitorController extends Controller
         ]);
     }
 
-    public function indexBrands($id)
-    {
-        $list = DB::table('brands_exhibitors')
-            ->leftJoin('brands', 'brands_exhibitors.brand_id', '=', 'brands.id')
-            ->where('brands_exhibitors.exhibitor_id', '=', $id)
-            ->select('brands_exhibitors.*', 'brands.name')
-            ->get();
-        $exhibitor_data = DB::table('exhibitors_data')->where('exhibitor_id', '=', $id)->first();
-        if(!is_object($exhibitor_data)) {
-            abort(404);
-        }
-        return view('exhibitors::brands', ['list' => $list, 'exhibitor_company' => $exhibitor_data->company, 'exhibitor_id' => $id]);
-    }
-
-    public function indexStands($id)
-    {
-        $exhibitor_data = DB::table('exhibitors_data')->where('exhibitor_id', '=', $id)->first();
-        if(!is_object($exhibitor_data)) {
-            abort(404);
-        }
-        $list = DB::table('code_modules')->where('exhibitor_id', '=', $exhibitor_data->exhibitor_id)->get();
-
-        $stand = DB::table('stands_types_translations')
-            ->leftJoin('code_modules', 'stands_types_translations.stand_type_id', '=', 'code_modules.stand_type_id')
-            ->where([
-                ['stands_types_translations.locale', '=', App::getLocale()],
-                ['code_modules.exhibitor_id', '=', $exhibitor_data->exhibitor_id]
-            ])->first();
-
-        $stand_type_id = $stand->stand_type_id;
-
-        $total = 0;
-        if(hasOrder($exhibitor_data->email_responsible)) {
-
-            $code_modules = DB::table('code_modules')->where('exhibitor_id', '=', $exhibitor_data->exhibitor_id)->pluck('id')->toArray();
-            $exhibitor_data_id = $exhibitor_data->exhibitor_id;
-            $orders = DB::table('orders')
-                ->leftJoin('furnishings', 'orders.furnishing_id', '=', 'furnishings.id')
-                ->leftJoin('furnishings_translations', function($join) {
-                    $join->on('furnishings.id', '=', 'furnishings_translations.furnishing_id')
-                        ->orOn('furnishings.variant_id', '=', 'furnishings_translations.furnishing_id');
-                }) //'orders.furnishing_id', '=', 'furnishings_translations.furnishing_id')
-                ->leftJoin('code_modules', function($join) use($exhibitor_data_id, $stand_type_id) {
-                    $join->on('code_modules.id', '=', 'orders.code_module_id');
-                    $join->where([
-                        ['code_modules.exhibitor_id', '=', $exhibitor_data_id],
-                        ['code_modules.stand_type_id', '=', $stand_type_id],
-                    ]);
-                })
-                ->leftJoin('furnishings_stands_types', function($join) {
-                    $join->on('furnishings_stands_types.stand_type_id', '=', 'code_modules.stand_type_id')
-                        ->on('furnishings_stands_types.furnishing_id', '=', 'orders.furnishing_id');
-                })
-                ->where([
-                    ['orders.exhibitor_id', '=', $exhibitor_data_id],
-                    ['furnishings_translations.locale', '=', App::getLocale()],
-                ])
-                ->whereIn('orders.code_module_id', $code_modules)
-                ->select('furnishings.extra_price', 'furnishings.price', 'orders.qty', 'orders.is_supplied', 'furnishings_stands_types.max')
-                ->get();
-
-            foreach($orders as $l) {
-                $price = 0;
-                if($l->extra_price) {
-                    $price = $l->price * $l->qty;
-                } else {
-                    if($l->is_supplied) {
-                        if($l->qty > $l->max) {
-                            $diff = $l->qty - $l->max;
-                            $price = $l->price * $diff;
-                        }
-                    } else {
-                        $price = $l->price * $l->qty;
-                    }
-                }
-                $total += $price;
-            }
-        }
-
-        $stand = $stand->name.' ('.trans('generals.mq').' '.$stand->size.')';
-
-        return view('exhibitors::stands', ['list' => $list, 'exhibitor_data' => $exhibitor_data, 'stand' => $stand, 'total' => $total]);
-    }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -679,15 +595,6 @@ class ExhibitorController extends Controller
         return view('exhibitors::edit', ['exhibitor' => $exhibitor]);
     }
 
-    public function editStand($exhibitor_id, $id)
-    {
-        $code_module = DB::table('code_modules')->where('id','=',$id)->first();
-        if(!is_object($code_module)) {
-            abort(404);
-        }
-        return view('exhibitors::stands.edit', ['code_module' => $code_module]);
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -780,39 +687,6 @@ class ExhibitorController extends Controller
 
             $entity_name = trans('entities.exhibitor');
             return redirect('admin/exhibitors/'.$id.'/edit')->with('success', trans('forms.updated_success',['obj' => $entity_name]));
-
-        } catch(\Exception $e) {
-            return redirect()
-                ->back()
-                ->withErrors($e->getMessage())
-                ->withInput();
-        }
-    }
-
-    public function updateStand(Request $request, $id)
-    {
-        $validation_data = [
-            'exhibitor_id' => ['required', 'exists:exhibitors,id'],
-            'code' => ['required', 'string', 'max:255']
-        ];
-
-        $validator = Validator::make($request->all(), $validation_data);
-
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-
-        try {
-
-            DB::table('code_modules')->where('id', '=', $id)->update([
-                'code' => $request->code
-            ]);
-
-            $entity_name = trans('entities.stand');
-            return redirect('admin/exhibitor/'.$request->exhibitor_id.'/stands')->with('success', trans('forms.updated_success',['obj' => $entity_name]));
 
         } catch(\Exception $e) {
             return redirect()
@@ -923,95 +797,6 @@ class ExhibitorController extends Controller
         }
     }
 
-    public function showStand($exhibitor_id, $id)
-    {
-        $exhibitor_data = DB::table('exhibitors_data')->where('exhibitor_id', '=', $exhibitor_id)->first();
-        if(!is_object($exhibitor_data)) {
-            abort(404);
-        }
-
-        $code_module = DB::table('code_modules')->where('id', '=', $id)->first();
-        $stand_type_id = $code_module->stand_type_id;
-
-        $list = DB::table('orders')
-            ->leftJoin('furnishings', 'orders.furnishing_id', '=', 'furnishings.id')
-            ->leftJoin('furnishings_translations', function($join) {
-                $join->on('furnishings.id', '=', 'furnishings_translations.furnishing_id')
-                    ->orOn('furnishings.variant_id', '=', 'furnishings_translations.furnishing_id');
-            }) //'orders.furnishing_id', '=', 'furnishings_translations.furnishing_id')
-            ->leftJoin('code_modules', function($join) use($exhibitor_id, $stand_type_id) {
-                $join->on('code_modules.id', '=', 'orders.code_module_id');
-                $join->where([
-                    ['code_modules.exhibitor_id', '=', $exhibitor_id],
-                    ['code_modules.stand_type_id', '=', $stand_type_id],
-                ]);
-            })
-            ->leftJoin('furnishings_stands_types', function($join) {
-                $join->on('furnishings_stands_types.stand_type_id', '=', 'code_modules.stand_type_id')
-                    ->on('furnishings_stands_types.furnishing_id', '=', 'orders.furnishing_id');
-            })
-            ->where([
-                ['orders.exhibitor_id', '=', $exhibitor_id],
-                ['orders.code_module_id', '=', $id],
-                ['furnishings_translations.locale', '=', App::getLocale()],
-            ])
-            ->select('furnishings.*', 'furnishings_translations.description', 'orders.id as order_id', 'orders.qty', 'orders.is_supplied', 'furnishings_stands_types.min', 'furnishings_stands_types.max')
-            ->get();
-
-        $total = 0;
-
-        foreach($list as $l) {
-            $price = 0;
-            if($l->extra_price) {
-                $price = $l->price * $l->qty;
-            } else {
-                if($l->is_supplied) {
-                    if($l->qty > $l->max) {
-                        $diff = $l->qty - $l->max;
-                        $price = $l->price * $diff;
-                    }
-                } else {
-                    $price = $l->price * $l->qty;
-                }
-            }
-            $total += $price;
-        }
-        
-        return view('exhibitors::stands.show', ['list' => $list, 'code_module' => $id, 'exhibitor_id' => $exhibitor_id, 'code' => $code_module->code, 'total' => $total]);
-    }
-
-    public function resetOrder($exhibitor_id)
-    {
-        $response = [
-            'status' => false,
-            'message' => trans('api.error_general')
-        ];
-
-        try {
-            if (!isset($exhibitor_id) || strlen($exhibitor_id) <= 0) {
-                $response['message'] = trans('api.error_validation');
-                return response()->json($response);
-            }
-
-            $exhibitor_data = DB::table('exhibitors_data')->where('exhibitor_id', '=', $exhibitor_id)->first();
-            if(!is_object($exhibitor_data)) {
-                $obj = trans('entities.exhibitor');
-                $response['message'] = trans('api.obj_not_found', ['obj' => $obj]);
-                return response()->json($response);
-            }
-
-            DB::table('exhibitors_data')->where('exhibitor_id', '=', $exhibitor_id)->update(['close_furnishings' => 0]);
-            DB::table('orders')->where('exhibitor_id', '=', $exhibitor_id)->delete();
-
-            $response['status'] = true;
-            $response['message'] = trans('generals.order_resetted');
-            return response()->json($response);
-        } catch(\Exception $e){
-            $response['message'] = $e->getMessage();
-            return response()->json($response);
-        }
-    }
-
     public function exportAll()
     {
         $list = DB::table('exhibitors_data')
@@ -1099,44 +884,6 @@ class ExhibitorController extends Controller
         
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('Espositori_incompleti');
-        $stream->addRows($to_export);
-
-        return $stream->toBrowser();
-    }
-
-    public function exportBrands($exhibitor_id)
-    {
-        $list = DB::table('brands_exhibitors')
-            ->leftJoin('brands', 'brands_exhibitors.brand_id', '=', 'brands.id')
-            ->where('brands_exhibitors.exhibitor_id', '=', $exhibitor_id)
-            ->select('brands_exhibitors.*', 'brands.name')
-            ->get();
-
-        $exhibitor_data = DB::table('exhibitors_data')->where('exhibitor_id', '=', $exhibitor_id)->first();
-            
-        $to_export = [];
-        foreach($list as $l) {
-            $item = [
-                "nome" => $l->name,
-                "approvato" => $l->is_approved ? 'si' : 'no',
-                "sito web" => $l->website,
-                "e-mail" => $l->email,
-                "telefono" => $l->phone,
-                "telefono 2" => $l->phone_2,
-                "città" => $l->city,
-                "nazione" => $l->nation,
-                "descrizione" => $l->description,
-                "completato da espositore" => $l->is_edited ? 'si' : 'no',
-                "revisione grafico" => $l->is_checked ? 'si' : 'no',
-            ];
-            array_push($to_export, $item);
-        }
-
-        $stream = SimpleExcelWriter::streamDownload($exhibitor_data->company.'_brands.xlsx');
-        $writer = $stream->getWriter();
-        
-        $sheet = $writer->getCurrentSheet();
-        $sheet->setName('Brands');
         $stream->addRows($to_export);
 
         return $stream->toBrowser();

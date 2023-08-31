@@ -14,16 +14,9 @@ Route::group(['prefix' => 'admin', 'middleware' => ['web','auth']], function() {
     Route::post('/exhibitors/getAjaxList', [ExhibitorController::class, 'getAjaxList']);
     Route::post('/exhibitors/compile-data', [ExhibitorController::class, 'sendFormCompileData'])->name('compile-data');
     Route::group(['prefix' => 'exhibitor'], function() {
-        // Route::post('/{id}/change/{field}', [ExhibitorController::class, 'changeFieldBoolean']);
         Route::get('/{id}/events', [ExhibitorController::class, 'indexEvents']);
         Route::get('/{id}/event/{event_id}/recap', [ExhibitorController::class, 'recapEvent']);
-        // Route::get('/{id}/stands', [ExhibitorController::class, 'indexStands']);
-        // Route::get('/{id}/stands/{stand}/edit', [ExhibitorController::class, 'editStand']);
-        // Route::get('/{id}/stands/{stand}/show', [ExhibitorController::class, 'showStand']);
-        // Route::patch('/stands/{stand}/update', [ExhibitorController::class, 'updateStand'])->name('code-modules.update');
-        // Route::get('/{id}/download-pdf', [ExhibitorController::class, 'downloadPDF']);
         Route::get('/{id}/admit', [ExhibitorController::class, 'admit']);
-        // Route::get('/{id}/reset-order', [ExhibitorController::class, 'resetOrder']);
     });
 
     Route::group(['prefix' => 'export'], function() {
