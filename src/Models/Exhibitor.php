@@ -5,7 +5,7 @@ namespace Fieroo\Exhibitors\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Fieroo\Exhibitors\Models\ExhibitorDetail;
-use App\Models\User;
+use Fieroo\Bootstrapper\Models\User;
 
 class Exhibitor extends Model
 {
