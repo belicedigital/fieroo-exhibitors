@@ -29,7 +29,6 @@ class ExhibitorController extends Controller
 
     public function compileData()
     {
-        dd(auth()->user()->id);
         $auth = Auth::user();
         $user = User::findOrFail($auth->id);
         App::setLocale($user->exhibitor->locale);
