@@ -512,16 +512,6 @@ class ExhibitorController extends Controller
                 'updated_at' => DB::raw('NOW()')
             ]);
 
-            // create empy code modules
-            /*
-            for($i = 0; $i < $request->n_modules; $i++) {
-                DB::table('code_modules')->insert([
-                    'exhibitor_id' => $exhibitor->id,
-                    'stand_type_id' => $request->select_brand
-                ]);
-            }
-            */
-
             $entity_name = trans('entities.exhibitor');
             return redirect('admin/exhibitors')->with('success', trans('forms.updated_success',['obj' => $entity_name]));
 
@@ -665,19 +655,6 @@ class ExhibitorController extends Controller
                 //'n_modules' => $request->n_modules,
                 'updated_at' => DB::raw('NOW()')
             ]);
-
-            /*
-            if($record->n_modules != $request->n_modules) {
-                DB::table('code_modules')->where('exhibitor_id', '=', $record->exhibitor_id)->delete();
-
-                for($i = 0; $i < $request->n_modules; $i++) {
-                    DB::table('code_modules')->insert([
-                        'exhibitor_id' => $record->exhibitor_id,
-                        'stand_type_id' => $request->select_brand
-                    ]);
-                }
-            }
-            */
 
             $entity_name = trans('entities.exhibitor');
             return redirect('admin/exhibitors/'.$id.'/edit')->with('success', trans('forms.updated_success',['obj' => $entity_name]));
@@ -896,7 +873,7 @@ class ExhibitorController extends Controller
                 $join->on('furnishings.id', '=', 'furnishings_translations.furnishing_id')
                     ->orOn('furnishings.variant_id', '=', 'furnishings_translations.furnishing_id');
             }) //'orders.furnishing_id', '=', 'furnishings_translations.furnishing_id')
-            ->leftJoin('code_modules', 'orders.code_module_id', '=', 'code_modules.id')
+            // ->leftJoin('code_modules', 'orders.code_module_id', '=', 'code_modules.id')
             ->leftJoin('stands_types_translations', 'code_modules.stand_type_id', '=', 'stands_types_translations.stand_type_id')
             ->leftJoin('furnishings_stands_types', function($join) {
                 $join->on('furnishings_stands_types.stand_type_id', '=', 'code_modules.stand_type_id')
@@ -907,7 +884,8 @@ class ExhibitorController extends Controller
                 ['furnishings_translations.locale', '=', App::getLocale()],
                 ['stands_types_translations.locale', '=', App::getLocale()],
             ])
-            ->select('furnishings.*', 'furnishings_translations.description', 'orders.qty', 'orders.is_supplied', 'furnishings_stands_types.min', 'furnishings_stands_types.max', 'stands_types_translations.name as stand_name', 'code_modules.code')
+            // ->select('furnishings.*', 'furnishings_translations.description', 'orders.qty', 'orders.is_supplied', 'furnishings_stands_types.min', 'furnishings_stands_types.max', 'stands_types_translations.name as stand_name', 'code_modules.code')
+            ->select('furnishings.*', 'furnishings_translations.description', 'orders.qty', 'orders.is_supplied', 'furnishings_stands_types.min', 'furnishings_stands_types.max', 'stands_types_translations.name as stand_name')
             ->get();
 
         foreach($list as $l) {
