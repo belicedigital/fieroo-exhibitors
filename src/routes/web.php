@@ -2,8 +2,10 @@
 use Illuminate\Support\Facades\Route;
 use Fieroo\Exhibitors\Controllers\ExhibitorController;
 
-Route::get('/compile-data', [ExhibitorController::class, 'compileData'])->name('compile-data-after-login');
-Route::get('/pending-admission', [ExhibitorController::class, 'pendingAdmission'])->name('pending-admission');
+Route::group(['middleware' => ['web','auth']], function() {
+    Route::get('/compile-data', [ExhibitorController::class, 'compileData'])->name('compile-data-after-login');
+    Route::get('/pending-admission', [ExhibitorController::class, 'pendingAdmission'])->name('pending-admission');
+});
 
 Route::group(['prefix' => 'admin', 'middleware' => ['web','auth']], function() {
     Route::resource('/exhibitors', ExhibitorController::class);

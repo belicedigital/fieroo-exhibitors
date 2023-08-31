@@ -32,13 +32,7 @@ class ExhibitorController extends Controller
         $auth = Auth::user();
         $user = User::findOrFail($auth->id);
         App::setLocale($user->exhibitor->locale);
-        $settings = Setting::take(1)->first();
-        return view('exhibitors::compile-data', [
-            'payment_mode' => App::getLocale() == 'it' ? $settings->payment_mode_it : $settings->payment_mode_en,
-            'form_radio_text_1' => App::getLocale() == 'it' ? $settings->expo_form_radio_text_1_it : $settings->expo_form_radio_text_1_en,
-            'form_radio_text_2' => App::getLocale() == 'it' ? $settings->expo_form_radio_text_2_it : $settings->expo_form_radio_text_2_en,
-            'privacy_policy_text' => App::getLocale() == 'it' ? $settings->privacy_policy_it_text : $settings->privacy_policy_en_text,
-        ]);
+        return view('exhibitors::compile-data');
     }
 
     public function pendingAdmission()

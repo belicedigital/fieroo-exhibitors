@@ -118,52 +118,6 @@
             </div>
         </div>
     </div>
-    <div class="form-group mb-5">
-        <h3>{{__('forms.exhibitor_form.terms_conditions.consent_personal_data')}} & Privacy Policy</h3>
-        <div class="icheck-primary d-inline">
-            <input type="checkbox" class="form-check-input" id="privacy_policy" required>
-            <label class="form-check-label" for="privacy_policy">* {{__('forms.exhibitor_form.terms_conditions.accept')}} <a href="javascript:void(0);" data-toggle="modal" data-target="#modalPrivacy">Privacy Policy</a></label>
-        </div>
-    </div>
-    <blockquote class="blockquote">
-        <div class="mb-0">{!! $form_radio_text_1 !!}</div>
-        <footer class="blockquote-footer">
-            <div>
-                <div class="form-group">
-                    <div class="icheck-primary d-inline">
-                        <input class="form-check-input" type="radio" name="accept_stats" id="accept_stats_yes" value="yes" required>
-                        <label class="form-check-label" for="accept_stats_yes">{{__('forms.exhibitor_form.terms_conditions.yes')}}</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="icheck-primary d-inline">
-                        <input class="form-check-input" type="radio" name="accept_stats" id="accept_stats_no" value="no">
-                        <label class="form-check-label" for="accept_stats_no">{{__('forms.exhibitor_form.terms_conditions.no')}}</label>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </blockquote>
-    <blockquote class="blockquote">
-        {{--<p class="mb-0">{{__('forms.exhibitor_form.terms_conditions.marketing')}}</p>--}}
-        <div class="mb-0">{!! $form_radio_text_2 !!}</div>
-        <footer class="blockquote-footer">
-            <div>
-                <div class="form-group">
-                    <div class="icheck-primary d-inline">
-                        <input class="form-check-input" type="radio" name="accept_marketing" id="accept_marketing_yes" value="yes" required>
-                        <label class="form-check-label" for="accept_marketing_yes">{{__('forms.exhibitor_form.terms_conditions.yes')}}</label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="icheck-primary d-inline">
-                        <input class="form-check-input" type="radio" name="accept_marketing" id="accept_marketing_no" value="no">
-                        <label class="form-check-label" for="accept_marketing_no">{{__('forms.exhibitor_form.terms_conditions.no')}}</label>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </blockquote>
     <div class="d-flex align-items-center justify-content-end">
         <button class="btn btn-primary btn-lg d-none spinner" type="button" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -172,21 +126,6 @@
     </div>
 </form>
 
-<div class="modal fade" id="modalPrivacy" tabindex="-1" role="dialog" aria-labelledby="modalPrivacyLabeL" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalPrivacyLabeL">Privacy Policy</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                {!! $privacy_policy_text !!}
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 @section('scripts')
 <script>
@@ -245,8 +184,8 @@
                 receiver_fiscal_code: $('input[name="receiver_fiscal_code"]').val(),
                 receiver_vat_number: $('input[name="receiver_vat_number"]').val(),
                 receiver_uni_code: $('input[name="receiver_uni_code"]').val(),
-                accept_stats: $('input[name="accept_stats"]:checked').val() == 'yes' ? 1 : 0,
-                accept_marketing: $('input[name="accept_marketing"]:checked').val() == 'yes' ? 1 : 0,
+                accept_stats: 1, //$('input[name="accept_stats"]:checked').val() == 'yes' ? 1 : 0,
+                accept_marketing: 1, //$('input[name="accept_marketing"]:checked').val() == 'yes' ? 1 : 0,
                 locale: selected_lang.trim()
             })
             .then(response => {
