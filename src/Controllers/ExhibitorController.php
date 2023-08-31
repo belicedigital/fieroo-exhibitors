@@ -47,7 +47,7 @@ class ExhibitorController extends Controller
     {
         $response = [
             'status' => false,
-            'message' => trans('api.error_general')
+            'message' => trans('api.error_general'),
         ];
 
         try {
@@ -126,7 +126,7 @@ class ExhibitorController extends Controller
 
             $body = formatDataForEmail([
                 'responsible' => $request->responsible,
-            ], $exhibitor_data->locale == 'it' ? $setting->email_pending_admit_exhibitor_it : $setting->email_pending_admit_exhibitor_en);
+            ], $exhibitor->locale == 'it' ? $setting->email_pending_admit_exhibitor_it : $setting->email_pending_admit_exhibitor_en);
 
             $data = [
                 'body' => $body
