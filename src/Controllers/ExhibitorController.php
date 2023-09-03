@@ -962,6 +962,32 @@ class ExhibitorController extends Controller
         return redirect('admin/exhibitors')->with('success', trans('forms.deleted_success',['obj' => $entity_name]));
     }
 
+    public function sendRemarketing($id)
+    {
+        $exhibitor = Exhibitor::findOrFail($id);
+        $user = User::findOrFail($exhibitor->user_id);
+
+        $setting = Setting::take(1)->first();
+
+        $body = formatDataForEmail([
+            'email' => $user->email,
+        ], $exhibitor->locale == 'it' ? $setting->email_remarketing_it : $setting->email_remarketing_en);
+
+        $data = [
+            'body' => $body
+        ];
+        
+        $email_from = env('MAIL_FROM_ADDRESS');
+        $email_to = $user->email;
+        $subject = trans('emails.remarketing_exhibitor', [], $exhibitor->locale);
+        Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
+            $m->from($email_from, env('MAIL_FROM_NAME'));
+            $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
+        });
+
+        return redirect('admin/exhibitors-incomplete')->with('success', trans('forms.remarketing_success'));
+    }
+
     /**
      * Remove the specified resource from storage.
      *

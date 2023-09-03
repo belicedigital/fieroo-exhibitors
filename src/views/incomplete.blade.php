@@ -82,9 +82,12 @@
                     data: null,
                     render: function(data,type,row){
                         let destroy_href = '{{ route("exhibitors-incomplete.destroy", ":id") }}';
+                        let send_href = '{{ route("exhibitors-incomplete.send-remarketing", ":id") }}';
                         destroy_href = destroy_href.replace(':id', row['id']);
+                        send_href = send_href.replace(':id', row['id']);
                         return `
                         <div class="btn-group" role="group">
+                            <a data-toggle="tooltip" data-placement="top" title="{{trans('generals.send_remarketing')}}" href=${send_href} class="btn btn-default"><i class="far fa-paper-plane"></i></a>
                             <form action=${destroy_href} method="POST">
                                 @csrf
                                 @method('DELETE')

@@ -158,34 +158,7 @@
 
                                 <a data-toggle="tooltip" data-placement="top" title="{{trans('generals.edit')}}" href=${edit_href} class="btn btn-default"><i class="fa fa-edit"></i></a>
                                 <a data-toggle="tooltip" data-placement="top" title="{{trans('entities.events')}}" href=${events_href} class="btn btn-default"><i class="fas fa-calendar-check"></i></a>
-                                {{--
-                                <button type="button" class="btn btn-default dropdown-toggle dropdown-icon" data-toggle="dropdown" aria-expanded="false">
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li>
-                                        <a class="dropdown-item" href=${events_href}>{{trans('entities.events')}}</a>
-                                    </li>
-                                    
-                                    <li>
-                                        <a class="dropdown-item" href=${brands_href}>{{trans('entities.brands')}}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href=${stands_href}>{{trans('entities.stands')}}</a>
-                                    </li>
-                                    
-                                    <li>
-                                        <a class="dropdown-item" href=${pdf_href}>{{trans('generals.send')}} PDF</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href=${furnishings_href}>{{trans('generals.send')}} {{trans('generals.prompt')}} {{ trans('entities.furnishings') }}</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href=${catalog_href}>{{trans('generals.send')}} {{trans('generals.prompt')}} {{ trans('entities.catalog') }}</a>
-                                    </li>
-                                    
-                                </ul>
-                                --}}
+                                
                                 @elseif(auth()->user()->roles->first()->name == 'amministrazione')
                                 <a href=${show_href} class="btn btn-default"><i class="fa fa-eye"></i></a>
                                 @endif
