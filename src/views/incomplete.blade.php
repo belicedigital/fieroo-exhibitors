@@ -56,6 +56,7 @@
                 },
             },
             drawCallback: function(){
+                $('[data-toggle="tooltip"]').tooltip()
                 $('form button').on('click', function(e) {
                     var $this = $(this);
                     e.preventDefault();
