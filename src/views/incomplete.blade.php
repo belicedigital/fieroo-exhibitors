@@ -45,7 +45,7 @@
             cancelButtonText: "{{ trans('generals.cancel') }}",
         }).then((result) => {
             if (result.isConfirmed) {
-                common_request.post('/exhibitors-incomplete/send-remarketing', {
+                common_request.post('/admin/exhibitors-incomplete/send-remarketing', {
                     id: id,
                 })
                 .then(response => {
