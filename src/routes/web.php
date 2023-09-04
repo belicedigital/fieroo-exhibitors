@@ -10,7 +10,7 @@ Route::group(['middleware' => ['web','auth']], function() {
         Route::resource('/exhibitors', ExhibitorController::class);
         Route::get('/exhibitors-incomplete', [ExhibitorController::class, 'incompleteData']);
         Route::delete('/exhibitors-incomplete/destroy/{id}', [ExhibitorController::class, 'destroyIncomplete'])->name('exhibitors-incomplete.destroy');
-        Route::delete('/exhibitors-incomplete/send-remarketing/{id}', [ExhibitorController::class, 'sendRemarketing'])->name('exhibitors-incomplete.send-remarketing');
+        Route::post('/exhibitors-incomplete/send-remarketing', [ExhibitorController::class, 'sendRemarketing']);
         Route::post('/exhibitors/getAjaxListIncompleted', [ExhibitorController::class, 'getAjaxListIncompleted']);
         Route::post('/exhibitors/getSelectList', [ExhibitorController::class, 'getSelectList']);
         Route::post('/exhibitors/getAjaxList', [ExhibitorController::class, 'getAjaxList']);

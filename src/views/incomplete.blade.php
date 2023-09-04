@@ -37,6 +37,33 @@
 @endsection
 @section('scripts')
 <script>
+    const sendRemarketing = (id) => {
+        Swal.fire({
+            title: "{!! trans('generals.confirm_remarketing') !!}",
+            showCancelButton: true,
+            confirmButtonText: "{{ trans('generals.confirm') }}",
+            cancelButtonText: "{{ trans('generals.cancel') }}",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                common_request.post('/exhibitors-incomplete/send-remarketing', {
+                    id: id,
+                })
+                .then(response => {
+                    let data = response.data
+                    if(data.status) {
+                        toastr.success(data.message)
+                    } else {
+                        toastr.error(data.message)
+                    }
+                })
+                .catch(error => {
+                    toastr.error(error)
+                    console.log(error)
+                })
+            }
+        })
+    }
+    
     $(document).ready(function() {
         $('table').DataTable({
             processing: true,
@@ -83,12 +110,10 @@
                     data: null,
                     render: function(data,type,row){
                         let destroy_href = '{{ route("exhibitors-incomplete.destroy", ":id") }}';
-                        let send_href = '{{ route("exhibitors-incomplete.send-remarketing", ":id") }}';
                         destroy_href = destroy_href.replace(':id', row['id']);
-                        send_href = send_href.replace(':id', row['id']);
                         return `
                         <div class="btn-group" role="group">
-                            <a data-toggle="tooltip" data-placement="top" title="{{trans('generals.send_remarketing')}}" href=${send_href} class="btn btn-default"><i class="far fa-paper-plane"></i></a>
+                            <a data-toggle="tooltip" data-placement="top" title="{{trans('generals.send_remarketing')}}" onclick="sendRemarketing(${row['id']})" href="javascript:void(0);" class="btn btn-default"><i class="far fa-paper-plane"></i></a>
                             <form action=${destroy_href} method="POST">
                                 @csrf
                                 @method('DELETE')
