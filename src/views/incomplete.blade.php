@@ -92,7 +92,7 @@
                             <form action=${destroy_href} method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-default" type="submit"><i class="fa fa-trash"></i></button>
+                                <button data-toggle="tooltip" data-placement="top" title="{{trans('generals.delete')}}" class="btn btn-default" type="submit"><i class="fa fa-trash"></i></button>
                             </form>
                         </div>
                         `
