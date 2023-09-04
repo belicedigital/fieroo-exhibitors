@@ -981,7 +981,7 @@ class ExhibitorController extends Controller
                 return response()->json($response);
             }
 
-            $exhibitor = Exhibitor::findOrFail($id);
+            $exhibitor = Exhibitor::findOrFail($request->id);
             $user = User::findOrFail($exhibitor->user_id);
 
             $setting = Setting::take(1)->first();
