@@ -32,7 +32,7 @@ class ExhibitorController extends Controller
         $auth = Auth::user();
         $user = User::findOrFail($auth->id);
         App::setLocale($user->exhibitor->locale);
-        return view('exhibitors::compile-data');
+        return view('exhibitors::compile-data', ['locale' => $user->exhibitor->locale]);
     }
 
     public function pendingAdmission()
@@ -65,6 +65,7 @@ class ExhibitorController extends Controller
                 'diff_billing' => ['required', 'boolean'],
                 'accept_stats' => ['required', 'boolean'],
                 'accept_marketing' => ['required', 'boolean'],
+                'locale' => ['required', 'string', 'max:2'],
             ];
 
             if($request->locale == 'it') {

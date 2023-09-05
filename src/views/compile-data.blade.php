@@ -5,6 +5,7 @@
 @section('form')
 <form class="p-5 bg-white w-100">
     @csrf
+    <input type="hidden" name="locale" value="{{$locale}}">
     <div class="form-group">
         <h3>{{__('forms.exhibitor_form.required_title')}}</h3>
     </div>
@@ -63,7 +64,7 @@
                 <div class="form-group col-md-4">
                     <input type="text" name="vat_number" class="form-control w-100" placeholder="* {{__('forms.exhibitor_form.exhibitor.company.vat_number')}}" required>
                 </div>
-                <div class="form-group col-md-4 {{ App::getLocale() == 'en' ? 'd-none' : '' }}">
+                <div class="form-group col-md-4 {{ $locale == 'en' ? 'd-none' : '' }}">
                     <input type="text" name="uni_code" class="form-control w-100" placeholder="* {{__('forms.exhibitor_form.exhibitor.company.uni_code')}}" required>
                 </div>
             </div>
@@ -112,7 +113,7 @@
                 <div class="form-group col-md-4">
                     <input type="text" name="receiver_vat_number" class="form-control w-100" placeholder="* {{__('forms.exhibitor_form.data_billing.vat_number')}}">
                 </div>
-                <div class="form-group col-md-4 {{ App::getLocale() == 'en' ? 'd-none' : '' }}">
+                <div class="form-group col-md-4 {{ $locale == 'en' ? 'd-none' : '' }}">
                     <input type="text" name="receiver_uni_code" class="form-control w-100" placeholder="* {{__('forms.exhibitor_form.data_billing.uni_code')}}">
                 </div>
             </div>
@@ -131,7 +132,8 @@
 <script>
     $(document).ready(function() {
         //console.log("{{App::getLocale()}}")
-        let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
+        // let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
+        const selected_lang = $('input[name="locale"]').val()
         if(selected_lang.trim() == 'it') {
             $('input[name="uni_code"]').attr('required', true)
         } else {
@@ -139,7 +141,7 @@
         }
 
         $('#diff_billing').on('change', function() {
-            let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
+            // let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
             $('[data-billing]').toggleClass('d-none');
             if($(this).val() == 'yes') {
                 $('input[name="receiver_vat_number"]').attr('required', true)
@@ -158,7 +160,7 @@
             e.preventDefault();
             $('form').find('button[type="submit"]').toggleClass('d-none');
             $('form').find('.spinner').toggleClass('d-none');
-            let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
+            // let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
             common_request.post('/admin/exhibitors/compile-data', {
                 company: $('input[name="company"]').val(),
                 address: $('input[name="address"]').val(),
