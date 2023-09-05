@@ -159,7 +159,7 @@ class ExhibitorController extends Controller
             // });
             Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from) {
                 $m->from($email_from, 'Espositore - Pending');
-                $m->to(env('MAIL_CONTABILITA'))->subject('Notifica Invio fattura a Espositore');
+                $m->to(env('MAIL_CONTABILITA'))->subject('Espositore in attesa di ammissione');
             });
 
             $response['status'] = true;
