@@ -123,7 +123,7 @@
         <button class="btn btn-primary btn-lg d-none spinner" type="button" disabled>
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         </button>
-        <button type="submit" class="btn btn-primary btn-lg" disabled>{{__('generals.save')}}</button>
+        <button type="submit" class="btn btn-primary btn-lg">{{__('generals.save')}}</button>
     </div>
 </form>
 
@@ -216,7 +216,7 @@
             
         });
         /* end send form */
-        /* validate data required */
+        /* validate data required
         $(window).scroll(function() {
             var top_of_element = $('form').find('button[type="submit"]').offset().top;
             var bottom_of_element = $('form').find('button[type="submit"]').offset().top + $('form').find('button[type="submit"]').outerHeight();
@@ -236,6 +236,7 @@
                 $('form').find('button[type="submit"]').attr('disabled', true);
             }
         });
+        */
         /* end validation */
     });
 </script>
