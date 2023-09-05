@@ -723,7 +723,7 @@ class ExhibitorController extends Controller
 
             $body = formatDataForEmail([
                 'responsible' => $exhibitor_data->responsible,
-            ], $exhibitor_data->locale == 'it' ? $setting->email_admit_exhibitor_it : $setting->email_admit_exhibitor_en);
+            ], $exhibitor->locale == 'it' ? $setting->email_admit_exhibitor_it : $setting->email_admit_exhibitor_en);
 
             $data = [
                 'body' => $body
