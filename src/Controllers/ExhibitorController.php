@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\App;
 use Fieroo\Bootstrapper\Models\Setting;
 use Fieroo\Bootstrapper\Models\User;
 use Fieroo\Exhibitors\Models\Exhibitor;
+use Fieroo\Exhibitors\Models\ExhibitorDetail;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use \Carbon\Carbon;
 use Validator;
