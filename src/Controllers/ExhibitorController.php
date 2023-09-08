@@ -82,6 +82,11 @@ class ExhibitorController extends Controller
             $auth = Auth::user();
             $user = User::findOrFail($auth->id);
 
+            if(!is_null($user->exhibitor->detail)) {
+                $response['message'] = trans('api.error_exhibitor_detail_already_exists');
+                return response()->json($response);
+            }
+
             // link exhibitor data
             $exhibitor_data = DB::table('exhibitors_data')->insert([
                 'exhibitor_id' => $user->exhibitor->id,
@@ -116,7 +121,7 @@ class ExhibitorController extends Controller
                 'updated_at' => DB::raw('NOW()')
             ]);
 
-            $exhibitor = Exhibitor::findOrFail($user->exhibitor->id);
+            // $exhibitor = Exhibitor::findOrFail($user->exhibitor->id);
             // $data = [
             //     'responsible' => $request->responsible,
             //     'locale' => $exhibitor->locale,
@@ -127,7 +132,7 @@ class ExhibitorController extends Controller
 
             $body = formatDataForEmail([
                 'responsible' => $request->responsible,
-            ], $exhibitor->locale == 'it' ? $setting->email_pending_admit_exhibitor_it : $setting->email_pending_admit_exhibitor_en);
+            ], $user->exhibitor->locale == 'it' ? $setting->email_pending_admit_exhibitor_it : $setting->email_pending_admit_exhibitor_en);
 
             $data = [
                 'body' => $body
@@ -135,7 +140,7 @@ class ExhibitorController extends Controller
             
             $email_from = env('MAIL_FROM_ADDRESS');
             $email_to = $user->email;
-            $subject = trans('emails.pending_exhibitor', [], $exhibitor->locale);
+            $subject = trans('emails.pending_exhibitor', [], $user->exhibitor->locale);
             // Mail::send('emails.pending-admit-exhibitor', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
             //     $m->from($email_from, env('MAIL_FROM_NAME'));
             //     $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
@@ -165,6 +170,7 @@ class ExhibitorController extends Controller
 
             $response['status'] = true;
             $response['message'] = trans('forms.exhibitor_form.save_compile_data');
+            
             return response()->json($response);
 
         } catch(\Exception $e) {
@@ -945,19 +951,27 @@ class ExhibitorController extends Controller
      */
     public function destroy($id)
     {
-        $exhibitor_data = DB::table('exhibitors_data')->where('id','=',$id)->first();
-        if(!is_object($exhibitor_data)) {
+
+        // $exhibitor_data = DB::table('exhibitors_data')->where('id','=',$id)->first();
+        // if(!is_object($exhibitor_data)) {
+        //     abort(404);
+        // }
+        $exhibitorDetail = ExhibitorDetail::findOrFail($id);
+        if(!$exhibitorDetail->exhibitor->user->delete()) {
             abort(404);
         }
-        $email = $exhibitor_data->email_responsible;
+        // $email = $exhibitor_data->email_responsible;
+        // if(!User::where('email','=',$email)->delete()){
+        //     abort(404);
+        // }
 
-        DB::table('exhibitors')->where('id','=',$exhibitor_data->exhibitor_id)->delete();
+        // DB::table('exhibitors')->where('id','=',$exhibitor_data->exhibitor_id)->delete();
 
-        // check if exists user
-        $user = DB::table('users')->where('email','=',$email)->first();
-        if(is_object($user)) {
-            DB::table('users')->where('id','=',$user->id)->delete();
-        }
+        // // check if exists user
+        // $user = DB::table('users')->where('email','=',$email)->first();
+        // if(is_object($user)) {
+        //     DB::table('users')->where('id','=',$user->id)->delete();
+        // }
 
         $entity_name = trans('entities.exhibitor');
         return redirect('admin/exhibitors')->with('success', trans('forms.deleted_success',['obj' => $entity_name]));
