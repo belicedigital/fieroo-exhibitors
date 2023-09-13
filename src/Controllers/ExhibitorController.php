@@ -325,6 +325,7 @@ class ExhibitorController extends Controller
             ->select('exhibitors_data.*', 'users.email as email', DB::raw('COUNT(payments.type_of_payment) as n_events'))
             ->groupBy('payments.type_of_payment')
             ->get();
+        dd($records);
 
         $data_arr = array();
         $sno = $start+1;
