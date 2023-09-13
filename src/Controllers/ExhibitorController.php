@@ -339,7 +339,7 @@ class ExhibitorController extends Controller
                 //"email" => $record->email_responsible,
                 "email" => $record->email,
                 "is_admitted" => $record->is_admitted,
-                "n_events" => $record->n_events,
+                // "n_events" => $record->n_events,
             );
         }
 
