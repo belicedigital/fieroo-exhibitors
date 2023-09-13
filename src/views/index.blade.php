@@ -16,7 +16,7 @@
                             <tr>
                                 <th>{{trans('tables.company')}}</th>
                                 <th>{{trans('tables.email')}}</th>
-                                {{-- <th>{{trans('tables.n_events')}}</th> --}}
+                                <th>{{trans('tables.n_events')}}</th>
                                 <th class="no-sort">{{trans('tables.is_admitted')}}</th>
                                 <th class="no-sort">{{trans('tables.actions')}}</th>
                             </tr>
@@ -129,7 +129,7 @@
             columns: [
                 { data: 'company' },
                 { data: 'email' },
-                // { data: 'n_events' },
+                { data: 'n_events' },
                 { 
                     data: null,
                     render: function(data,type,row){
@@ -153,13 +153,14 @@
                         let show_href = "{{url('admin/exhibitors/')}}/"+row['id']+'/show'
                         let destroy_href = '{{ route("exhibitors.destroy", ":id") }}';
                         destroy_href = destroy_href.replace(':id', row['id']);
+                        let show_event_btn = row['n_events'] > 0 ? '' : 'd-none'
                         return `
                         <div class="btn-group" role="group">
                             <div class="btn-group">
                                 @if(auth()->user()->roles->first()->name == 'super-admin')
 
                                 <a data-toggle="tooltip" data-placement="top" title="{{trans('generals.edit')}}" href=${edit_href} class="btn btn-default"><i class="fa fa-edit"></i></a>
-                                <a data-toggle="tooltip" data-placement="top" title="{{trans('entities.events')}}" href=${events_href} class="btn btn-default"><i class="fas fa-calendar-check"></i></a>
+                                <a data-toggle="tooltip" data-placement="top" title="{{trans('entities.events')}}" href=${events_href} class="btn btn-default ${show_event_btn}"><i class="fas fa-calendar-check"></i></a>
                                 
                                 @elseif(auth()->user()->roles->first()->name == 'amministrazione')
                                 <a href=${show_href} class="btn btn-default"><i class="fa fa-eye"></i></a>

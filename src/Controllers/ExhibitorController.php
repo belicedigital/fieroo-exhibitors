@@ -9,6 +9,7 @@ use Fieroo\Bootstrapper\Models\Setting;
 use Fieroo\Bootstrapper\Models\User;
 use Fieroo\Exhibitors\Models\Exhibitor;
 use Fieroo\Exhibitors\Models\ExhibitorDetail;
+use Fieroo\Payment\Models\Payment;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use \Carbon\Carbon;
 use Validator;
@@ -301,20 +302,16 @@ class ExhibitorController extends Controller
         $columnSortOrder = $order_arr[0]['dir']; // asc or desc
         $searchValue = $search_arr['value']; // Search value
         
-        $totalRecords = DB::table('exhibitors_data')->count();
+        $totalRecords = ExhibitorDetail::count();
 
-        $totalRecordswithFilter = DB::table('exhibitors_data')
-            ->where(function($query) use ($searchValue){
-                $query->where('email_responsible', 'LIKE', '%'.$searchValue.'%')
-                      ->orWhere('company', 'LIKE', '%'.$searchValue.'%');
-            })
-            ->count();
+        $totalRecordswithFilter = ExhibitorDetail::where(function($query) use ($searchValue){
+            $query->where('email_responsible', 'LIKE', '%'.$searchValue.'%')
+                  ->orWhere('company', 'LIKE', '%'.$searchValue.'%');
+        })->count();
             
         $records = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
-            // ->leftJoin('payments', 'exhibitors.user_id', '=', 'payments.user_id')
-            // ->where('payments.type_of_payment','=','subscription')
             ->where(function($query) use ($searchValue){
                 $query->where('users.email', 'LIKE', '%'.$searchValue.'%')
                       ->orWhere('exhibitors_data.company', 'LIKE', '%'.$searchValue.'%');
@@ -322,11 +319,8 @@ class ExhibitorController extends Controller
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
             ->take($rowperpage)
-            ->select('exhibitors_data.*', 'users.email as email')
-            // ->select('exhibitors_data.*', 'users.email as email', DB::raw('COUNT(payments.type_of_payment) as n_events'))
-            // ->groupBy('payments.type_of_payment')
+            ->select('exhibitors_data.*', 'users.email as email', 'users.id as user_id')
             ->get();
-        // dd($records);
 
         $data_arr = array();
         $sno = $start+1;
@@ -336,10 +330,12 @@ class ExhibitorController extends Controller
                 'id' => $record->id,
                 'exhibitor_id' => $record->exhibitor_id,
                 "company" => $record->company,
-                //"email" => $record->email_responsible,
                 "email" => $record->email,
                 "is_admitted" => $record->is_admitted,
-                // "n_events" => $record->n_events,
+                "n_events" => Payment::where([
+                    ['user_id','=',$record->user_id],
+                    ['type_of_payment','=','subscription']
+                ])->count(),
             );
         }
 
