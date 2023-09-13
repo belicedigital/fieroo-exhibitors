@@ -16,7 +16,7 @@
                             <tr>
                                 <th>{{trans('tables.company')}}</th>
                                 <th>{{trans('tables.email')}}</th>
-                                <th>{{trans('tables.n_events')}}</th>
+                                {{-- <th>{{trans('tables.n_events')}}</th> --}}
                                 <th class="no-sort">{{trans('tables.is_admitted')}}</th>
                                 <th class="no-sort">{{trans('tables.actions')}}</th>
                             </tr>
@@ -129,7 +129,7 @@
             columns: [
                 { data: 'company' },
                 { data: 'email' },
-                { data: 'n_events' },
+                // { data: 'n_events' },
                 { 
                     data: null,
                     render: function(data,type,row){

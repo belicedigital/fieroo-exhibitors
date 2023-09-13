@@ -313,8 +313,8 @@ class ExhibitorController extends Controller
         $records = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
-            ->leftJoin('payments', 'exhibitors.user_id', '=', 'payments.user_id')
-            ->where('payments.type_of_payment','=','subscription')
+            // ->leftJoin('payments', 'exhibitors.user_id', '=', 'payments.user_id')
+            // ->where('payments.type_of_payment','=','subscription')
             ->where(function($query) use ($searchValue){
                 $query->where('users.email', 'LIKE', '%'.$searchValue.'%')
                       ->orWhere('exhibitors_data.company', 'LIKE', '%'.$searchValue.'%');
@@ -322,10 +322,11 @@ class ExhibitorController extends Controller
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
             ->take($rowperpage)
-            ->select('exhibitors_data.*', 'users.email as email', DB::raw('COUNT(payments.type_of_payment) as n_events'))
-            ->groupBy('payments.type_of_payment')
+            ->select('exhibitors_data.*', 'users.email as email')
+            // ->select('exhibitors_data.*', 'users.email as email', DB::raw('COUNT(payments.type_of_payment) as n_events'))
+            // ->groupBy('payments.type_of_payment')
             ->get();
-        dd($records);
+        // dd($records);
 
         $data_arr = array();
         $sno = $start+1;
