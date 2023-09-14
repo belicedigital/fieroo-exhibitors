@@ -10,6 +10,7 @@ use Fieroo\Bootstrapper\Models\User;
 use Fieroo\Exhibitors\Models\Exhibitor;
 use Fieroo\Exhibitors\Models\ExhibitorDetail;
 use Fieroo\Payment\Models\Payment;
+use Fieroo\Events\Models\Event;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use \Carbon\Carbon;
 use Validator;
@@ -352,18 +353,22 @@ class ExhibitorController extends Controller
     public function indexEvents($id)
     {
         $exhibitor = Exhibitor::findOrFail($id);
-        $list = DB::table('events')
-            ->leftJoin('payments','events.id','=','payments.event_id')
-            ->where([
-                ['payments.user_id','=',$exhibitor->user_id],
-                ['payments.type_of_payment','=','subscription']
-            ])
-            ->select('events.*')
-            ->get();
+        // $list = DB::table('events')
+        //     ->leftJoin('payments','events.id','=','payments.event_id')
+        //     ->where([
+        //         ['payments.user_id','=',$exhibitor->user_id],
+        //         ['payments.type_of_payment','=','subscription']
+        //     ])
+        //     ->select('events.*')
+        //     ->get();
+        $list = Event::whereHas('subscriptions', function($q) use($exhibitor) {
+            $q->where([
+                ['user_id','=',$exhibitor->user_id],
+                ['type_of_payment','=','subscription']
+            ]);
+        })->get();
         
-        $exhibitor_data = DB::table('exhibitors_data')->where('exhibitor_id','=',$exhibitor->id)->first();
-        
-        return view('exhibitors::events', ['list' => $list, 'exhibitor_data' => $exhibitor_data, 'user_id' => $exhibitor->user_id]);
+        return view('exhibitors::events', ['list' => $list, 'exhibitor_data' => $exhibitor->detail, 'user_id' => $exhibitor->user_id]);
     }
 
     public function recapEvent($exhibitor_id, $event_id)
