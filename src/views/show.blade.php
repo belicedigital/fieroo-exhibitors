@@ -15,11 +15,11 @@
                 <div class="card-body">
                     @if($exhibitor->created_at != $exhibitor->updated_at)
                     <div class="alert alert-info">
-                        <strong>Ultimo aggiornamento {{ \Carbon\Carbon::parse($exhibitor->updated_at)->format('d/m/Y H:i:s') }}</strong> 
+                        <strong>{{trans('generals.last_updt')}} {{ \Carbon\Carbon::parse($exhibitor->updated_at)->format('d/m/Y H:i:s') }}</strong> 
                     </div>
                     @endif
                     <div class="alert alert-info">
-                        <strong>Espositore {{$exhibitor->locale == 'it' ? 'Italiano' : 'Inglese'}}</strong> 
+                        <strong>{{trans('entities.exhibitor')}} {{$exhibitor->locale == 'it' ? 'Italiano' : 'Inglese'}}</strong> 
                     </div>
                     <form>
                         <div class="row">
