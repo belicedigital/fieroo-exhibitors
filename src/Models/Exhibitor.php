@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Fieroo\Exhibitors\Models\ExhibitorDetail;
 use Fieroo\Bootstrapper\Models\User;
+use Laravel\Cashier\Billable;
 
 class Exhibitor extends Model
 {
-    use HasFactory;
+    use HasFactory, Billable;
 
     public $timestamps = true;
 
