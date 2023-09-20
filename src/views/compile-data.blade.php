@@ -141,6 +141,12 @@
         }
 
         $('#diff_billing').on('change', function() {
+            let $this = $(this)
+            if($this.val() == 'no') {
+                $.each($('[data-billing]').find('input'), function(index, element) {
+                    $(element).val('')
+                })
+            }
             // let selected_lang = "{{App::getLocale()}}"//$('a.nav-link.dropdown-toggle.text-uppercase').text();
             $('[data-billing]').toggleClass('d-none');
             if($(this).val() == 'yes') {
@@ -215,29 +221,6 @@
             })
             
         });
-        /* end send form */
-        /* validate data required
-        $(window).scroll(function() {
-            var top_of_element = $('form').find('button[type="submit"]').offset().top;
-            var bottom_of_element = $('form').find('button[type="submit"]').offset().top + $('form').find('button[type="submit"]').outerHeight();
-            var bottom_of_screen = $(window).scrollTop() + $(window).innerHeight();
-            var top_of_screen = $(window).scrollTop();
-
-            if ((bottom_of_screen > top_of_element) && (top_of_screen < bottom_of_element)){
-                $.each($('form').find('[required]'), (index, value) => {
-                    let type = $(value)[0].type
-                    if((type != 'checkbox' && $(value).val().length > 0) || (type == 'checkbox' && $(value).is(':checked'))) {
-                        $('form').find('button[type="submit"]').removeAttr('disabled');
-                    } else {
-                        $('form').find('button[type="submit"]').attr('disabled', true);
-                    }
-                });
-            } else {
-                $('form').find('button[type="submit"]').attr('disabled', true);
-            }
-        });
-        */
-        /* end validation */
     });
 </script>
 @endsection

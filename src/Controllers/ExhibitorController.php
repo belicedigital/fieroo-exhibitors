@@ -12,6 +12,7 @@ use Fieroo\Exhibitors\Models\ExhibitorDetail;
 use Fieroo\Payment\Models\Payment;
 use Fieroo\Events\Models\Event;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use Fieroo\Exhibitors\Rules\VatNumberValidationRule;
 use \Carbon\Carbon;
 use Validator;
 use Mail;
@@ -64,7 +65,7 @@ class ExhibitorController extends Controller
                 'phone' => ['required', 'string', 'max:255'],
                 'responsible' => ['required', 'string', 'max:255'],
                 'phone_responsible' => ['required', 'string', 'max:255'],
-                'vat_number' => ['required', 'string', 'max:255'],
+                'vat_number' => ['required', 'string', 'max:255', new VatNumberValidationRule],
                 'diff_billing' => ['required', 'boolean'],
                 'accept_stats' => ['required', 'boolean'],
                 'accept_marketing' => ['required', 'boolean'],
@@ -73,6 +74,10 @@ class ExhibitorController extends Controller
 
             if($request->locale == 'it') {
                 $validation_data['uni_code'] = ['required', 'string', 'max:255'];
+            }
+
+            if($request->diff_billing) {
+                $validation_data['receiver_vat_number'] = ['string', 'max:255', new VatNumberValidationRule];
             }
     
             $validator = Validator::make($request->all(), $validation_data);
@@ -124,13 +129,6 @@ class ExhibitorController extends Controller
                 'updated_at' => DB::raw('NOW()')
             ]);
 
-            // $exhibitor = Exhibitor::findOrFail($user->exhibitor->id);
-            // $data = [
-            //     'responsible' => $request->responsible,
-            //     'locale' => $exhibitor->locale,
-            //     'company' => $request->company
-            // ];
-
             $setting = Setting::take(1)->first();
 
             $body = formatDataForEmail([
@@ -144,10 +142,7 @@ class ExhibitorController extends Controller
             $email_from = env('MAIL_FROM_ADDRESS');
             $email_to = $user->email;
             $subject = trans('emails.pending_exhibitor', [], $user->exhibitor->locale);
-            // Mail::send('emails.pending-admit-exhibitor', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
-            //     $m->from($email_from, env('MAIL_FROM_NAME'));
-            //     $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
-            // });
+
             Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
                 $m->from($email_from, env('MAIL_FROM_NAME'));
                 $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
@@ -162,10 +157,7 @@ class ExhibitorController extends Controller
             $data = [
                 'body' => $body
             ];
-            // Mail::send('emails.pending-notification-admit', ['data' => $data], function ($m) use ($email_from) {
-            //     $m->from($email_from, 'Espositore - Pending');
-            //     $m->to(env('MAIL_CONTABILITA'))->subject('Notifica Invio fattura a Espositore');
-            // });
+
             Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from) {
                 $m->from($email_from, 'Espositore - Pending');
                 $m->to(env('MAIL_CONTABILITA'))->subject('Espositore in attesa di ammissione');
