@@ -13,6 +13,7 @@ use Fieroo\Payment\Models\Payment;
 use Fieroo\Events\Models\Event;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Fieroo\Exhibitors\Rules\VatNumberValidationRule;
+use Fieroo\Payment\Models\Order;
 use \Carbon\Carbon;
 use Validator;
 use Mail;
@@ -365,18 +366,15 @@ class ExhibitorController extends Controller
 
     public function recapEvent($exhibitor_id, $event_id)
     {
-        $orders = DB::table('orders')
-            ->leftJoin('furnishings_translations','orders.furnishing_id','=','furnishings_translations.furnishing_id')
-            ->where([
-                ['orders.exhibitor_id','=',$exhibitor_id],
-                ['orders.event_id','=',$event_id],
-                ['furnishings_translations.locale','=',App::getLocale()]
-            ])
-            ->select('orders.furnishing_id', DB::raw('sum(qty) as qty'), DB::raw('sum(price) as price'), 'furnishings_translations.description')
-            ->groupBy('orders.furnishing_id','furnishings_translations.description')
-            ->get();
-
         $exhibitor = Exhibitor::findOrFail($exhibitor_id);
+        
+        $orders = Order::where([
+            ['orders.exhibitor_id','=',$exhibitor_id],
+            ['orders.event_id','=',$event_id],
+        ])->get();
+        foreach($orders as $order) {
+            $order->description = $order->furnishing->is_variant ? $order->furnishing->parent->translations()->where('locale',App::getLocale())->first()->description : $order->furnishing->translations()->where('locale',App::getLocale())->first()->description;
+        }
 
         $payment_data = DB::table('payments')->where([
             ['event_id','=',$event_id],
