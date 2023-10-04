@@ -1,9 +1,9 @@
 @extends('layouts.app')
 @section('title', trans('entities.exhibitors'))
 @section('title_header', trans('entities.exhibitors'))
-@section('buttons')
-<a href="{{url('admin/export/exhibitors')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.export')}}"><i class="fas fa-file-export"></i></a>
-@endsection
+{{--@section('buttons')--}}
+{{--<a href="{{url('admin/export/exhibitors')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.export')}}"><i class="fas fa-file-export"></i></a>--}}
+{{--@endsection--}}
 @section('content')
 <div class="container-fluid">
     <input type="hidden" name="visible" value="{{ auth()->user()->roles->first()->name == 'super-admin' ? true : false }}">
@@ -130,7 +130,7 @@
                 { data: 'company' },
                 { data: 'email' },
                 { data: 'n_events' },
-                { 
+                {
                     data: null,
                     render: function(data,type,row){
                         let is_admitted = parseInt(row['is_admitted'])
@@ -161,7 +161,7 @@
 
                                 <a data-toggle="tooltip" data-placement="top" title="{{trans('generals.edit')}}" href=${edit_href} class="btn btn-default"><i class="fa fa-edit"></i></a>
                                 <a data-toggle="tooltip" data-placement="top" title="{{trans('entities.events')}}" href=${events_href} class="btn btn-default ${show_event_btn}"><i class="fas fa-calendar-check"></i></a>
-                                
+
                                 @elseif(auth()->user()->roles->first()->name == 'amministrazione')
                                 <a href=${show_href} class="btn btn-default"><i class="fa fa-eye"></i></a>
                                 @endif
