@@ -161,7 +161,7 @@ class ExhibitorController extends Controller
 
             Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from) {
                 $m->from($email_from, 'Espositore - Pending');
-                $m->to(env('MAIL_CONTABILITA'))->subject('Espositore in attesa di ammissione');
+                $m->to(env('MAIL_ADMIN'))->subject('Espositore in attesa di ammissione');
             });
 
             $response['status'] = true;
@@ -755,13 +755,9 @@ class ExhibitorController extends Controller
             $data = [
                 'body' => $body
             ];
-            // Mail::send('emails.notification-admit', ['data' => $data], function ($m) use ($email_from) {
-            //     $m->from($email_from, 'Espositore - Ammissione');
-            //     $m->to(env('MAIL_CONTABILITA'))->subject('Notifica Invio fattura a Espositore');
-            // });
             Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from) {
                 $m->from($email_from, 'Espositore - Ammissione');
-                $m->to(env('MAIL_CONTABILITA'))->subject('Notifica Ammissione Espositore');
+                $m->to(env('MAIL_ADMIN'))->subject('Notifica Ammissione Espositore');
             });
 
             $response['status'] = true;
