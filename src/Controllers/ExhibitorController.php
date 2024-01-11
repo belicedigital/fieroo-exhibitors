@@ -406,12 +406,15 @@ class ExhibitorController extends Controller
             abort(404);
         }
 
+        $settings = Setting::take(1)->first();
+
         return view('events::recap', [
             'extra' => $extra,
             'orders' => $orders,
             'n_modules' => $n_modules,
             'amount' => $amount,
             'stand_name' => $stand_trans->name,
+            'iva' => $settings->iva,
             'back_url' => 'admin/exhibitor/'.$exhibitor_id.'/events'
         ]);
     }
