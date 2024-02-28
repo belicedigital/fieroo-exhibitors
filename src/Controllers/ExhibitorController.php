@@ -83,12 +83,10 @@ class ExhibitorController extends Controller
         $validator = Validator::make($request->all(), $validation_data);
 
         if ($validator->fails()) {
-            dd($validator->errors());
-            $response['message'] = '';
+            $response['message'] = trans('api.error_validation_required_fields');
             foreach($validator->errors()->all() as $error) {
-                $response['message'] .=  $error.' \n';
+                $response['message'] .=  '\n '. $error;
             }
-            // $response['message'] = trans('api.error_validation_required_fields');
             return response()->json($response);
         }
 
