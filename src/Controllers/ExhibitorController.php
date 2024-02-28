@@ -55,46 +55,47 @@ class ExhibitorController extends Controller
             'message' => trans('api.error_general'),
         ];
 
+        $validation_data = [
+            'company' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'civic_number' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'cap' => ['required', 'string', 'max:255'],
+            'province' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:255'],
+            'responsible' => ['required', 'string', 'max:255'],
+            'phone_responsible' => ['required', 'string', 'max:255'],
+            'vat_number' => ['required', 'string', 'max:255', new VatNumberValidationRule],
+            'diff_billing' => ['required', 'boolean'],
+            'accept_stats' => ['required', 'boolean'],
+            'accept_marketing' => ['required', 'boolean'],
+            'locale' => ['required', 'string', 'max:2'],
+        ];
+
+        if($request->locale == 'it') {
+            $validation_data['uni_code'] = ['required', 'string', 'max:255'];
+        }
+
+        if($request->diff_billing) {
+            $validation_data['receiver_vat_number'] = ['string', 'max:255', new VatNumberValidationRule];
+        }
+
+        $validator = Validator::make($request->all(), $validation_data);
+
+        if ($validator->fails()) {
+            $response['message'] = trans('api.error_validation_required_fields');
+            return response()->json($response);
+        }
+
+        $auth = Auth::user();
+        $user = User::findOrFail($auth->id);
+
+        if(!is_null($user->exhibitor->detail)) {
+            $response['message'] = trans('api.error_exhibitor_detail_already_exists');
+            return response()->json($response);
+        }
+
         try {
-            $validation_data = [
-                'company' => ['required', 'string', 'max:255'],
-                'address' => ['required', 'string', 'max:255'],
-                'civic_number' => ['required', 'string', 'max:255'],
-                'city' => ['required', 'string', 'max:255'],
-                'cap' => ['required', 'string', 'max:255'],
-                'province' => ['required', 'string', 'max:255'],
-                'phone' => ['required', 'string', 'max:255'],
-                'responsible' => ['required', 'string', 'max:255'],
-                'phone_responsible' => ['required', 'string', 'max:255'],
-                'vat_number' => ['required', 'string', 'max:255', new VatNumberValidationRule],
-                'diff_billing' => ['required', 'boolean'],
-                'accept_stats' => ['required', 'boolean'],
-                'accept_marketing' => ['required', 'boolean'],
-                'locale' => ['required', 'string', 'max:2'],
-            ];
-
-            if($request->locale == 'it') {
-                $validation_data['uni_code'] = ['required', 'string', 'max:255'];
-            }
-
-            if($request->diff_billing) {
-                $validation_data['receiver_vat_number'] = ['string', 'max:255', new VatNumberValidationRule];
-            }
-    
-            $validator = Validator::make($request->all(), $validation_data);
-    
-            if ($validator->fails()) {
-                $response['message'] = trans('api.error_validation_required_fields');
-                return response()->json($response);
-            }
-
-            $auth = Auth::user();
-            $user = User::findOrFail($auth->id);
-
-            if(!is_null($user->exhibitor->detail)) {
-                $response['message'] = trans('api.error_exhibitor_detail_already_exists');
-                return response()->json($response);
-            }
 
             // link exhibitor data
             $exhibitor_data = DB::table('exhibitors_data')->insert([
