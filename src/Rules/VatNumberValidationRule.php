@@ -17,6 +17,6 @@ class VatNumberValidationRule implements Rule
 
     public function message()
     {
-        return 'The :attribute is not a valid VAT number.';
+        return __('validation.custom.vat_number.invalid');
     }
 }
