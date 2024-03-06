@@ -12,7 +12,9 @@ class VatNumberValidationRule implements Rule
         // You can implement validation rules specific to your country or region
         
         // For EU VAT numbers, a simple example would be to check for a valid format
-        return preg_match('/^[A-Z]{2}[0-9A-Z]+$/', $value);
+        // return preg_match('/^[0-9A-Z]+$/', $value);
+        // return preg_match('/^[0-9A-Za-z]+$/', $value);
+        return preg_match('/^[0-9A-Z]+$/i', $value);
     }
 
     public function message()
