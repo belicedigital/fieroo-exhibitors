@@ -149,10 +149,10 @@ class ExhibitorController extends Controller
             $email_to = $user->email;
             $subject = trans('emails.pending_exhibitor', [], $user->exhibitor->locale);
 
-            Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
-                $m->from($email_from, env('MAIL_FROM_NAME'));
-                $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
-            });
+            // Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
+            //     $m->from($email_from, env('MAIL_FROM_NAME'));
+            //     $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
+            // });
 
             // send notification to admin
             $body = formatDataForEmail([
