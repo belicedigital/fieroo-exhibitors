@@ -130,8 +130,9 @@ class ExhibitorController extends Controller
                 'diff_billing' => $request->diff_billing,
                 'accept_stats' => $request->accept_stats,
                 'accept_marketing' => $request->accept_marketing,
+                'is_admitted' => 1,
                 'created_at' => DB::raw('NOW()'),
-                'updated_at' => DB::raw('NOW()')
+                'updated_at' => DB::raw('NOW()'),
             ]);
 
             $setting = Setting::take(1)->first();
