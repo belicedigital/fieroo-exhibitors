@@ -1,9 +1,10 @@
 @extends('layouts.app')
 @section('title', trans('entities.exhibitors'))
 @section('title_header', trans('entities.exhibitors'))
-{{-- @section('buttons') --}}
-{{-- <a href="{{url('admin/export/exhibitors')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.export')}}"><i class="fas fa-file-export"></i></a> --}}
-{{-- @endsection --}}
+@section('buttons')
+    <a href="{{ url('admin/export/exhibitors') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
+        title="{{ trans('generals.export') }}"><i class="fas fa-file-export"></i></a>
+@endsection
 @section('content')
     <div class="container-fluid">
         <input type="hidden" name="visible"

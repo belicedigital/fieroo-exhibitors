@@ -779,10 +779,21 @@ class ExhibitorController extends Controller
 
     public function exportAll()
     {
+        // $list = DB::table('exhibitors_data')
+        //     ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
+        //     ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
+        //     ->select('exhibitors_data.*', 'users.email as email', 'exhibitors.locale as locale')
+        //     ->get();
         $list = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
-            ->select('exhibitors_data.*', 'users.email as email', 'exhibitors.locale as locale')
+            ->leftJoin(DB::raw('(SELECT exhibitor_id, COUNT(*) as orders_count FROM orders GROUP BY exhibitor_id) as orders_count'), 'exhibitors_data.exhibitor_id', '=', 'orders_count.exhibitor_id')
+            ->select(
+                'exhibitors_data.*', 
+                'users.email as email', 
+                'exhibitors.locale as locale',
+                'orders_count.orders_count' // numero di ordini raggruppati per exhibitor_id
+            )
             ->get();
             
         $to_export = [];
@@ -795,7 +806,6 @@ class ExhibitorController extends Controller
                 'cap' => $l->cap,
                 'provincia' => $l->province,
                 'telefono' => $l->phone,
-                'fax' => $l->fax,
                 'sito web' => $l->web,
                 'responsabile' => $l->responsible,
                 'e-mail' => $l->email,
@@ -812,23 +822,25 @@ class ExhibitorController extends Controller
                 'codice fiscale fatturazione' => $l->receiver_fiscal_code,
                 'partita iva fatturazione' => $l->receiver_vat_number,
                 'codice univoco fatturazione' => $l->receiver_uni_code,
-                'privacy accettata' => 'si',
-                'data accettazione' => Carbon::parse($l->created_at)->format('d/m/Y H:i:s'),
-                'accetta statistiche' => $l->accept_stats ? 'si' : 'no',
-                'accetta marketing' => $l->accept_marketing ? 'si' : 'no',
-                'lingua espositore' => $l->locale,
+                'iscritto ad evento' => $l->orders_count > 0 ? 'si' : 'no',
             ];
             array_push($to_export, $item);
         }
 
-        $stream = SimpleExcelWriter::streamDownload('Espositori.xlsx');
-        $writer = $stream->getWriter();
-        
-        $sheet = $writer->getCurrentSheet();
-        $sheet->setName('Espositori');
-        $stream->addRows($to_export);
+        $csv = SimpleExcelWriter::streamDownload('Espositori.csv')
+            ->addHeader(array_keys($to_export[0])) // Aggiungi l'intestazione basata sulle chiavi del primo elemento
+            ->addRows($to_export);
 
-        return $stream->toBrowser();
+        return $csv->toBrowser();
+
+        // $stream = SimpleExcelWriter::streamDownload('Espositori.csv');
+        // $writer = $stream->getWriter();
+        
+        // $sheet = $writer->getCurrentSheet();
+        // $sheet->setName('Espositori');
+        // $stream->addRows($to_export);
+
+        // return $stream->toBrowser();
     }
 
     public function exportIncompleted()
