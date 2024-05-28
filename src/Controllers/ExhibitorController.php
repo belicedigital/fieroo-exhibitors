@@ -787,17 +787,20 @@ class ExhibitorController extends Controller
         $list = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
-            ->leftJoin(DB::raw('(SELECT exhibitor_id, COUNT(*) as orders_count FROM orders GROUP BY exhibitor_id) as orders_count'), 'exhibitors_data.exhibitor_id', '=', 'orders_count.exhibitor_id')
             ->select(
                 'exhibitors_data.*', 
                 'users.email as email', 
+                'users.id as user_id',
                 'exhibitors.locale as locale',
-                'orders_count.orders_count' // numero di ordini raggruppati per exhibitor_id
             )
             ->get();
             
         $to_export = [];
         foreach($list as $l) {
+            $l->n_events = Payment::where([
+                ['user_id','=',$l->user_id],
+                ['type_of_payment','=','subscription']
+            ])->count();
             $item = [
                 'nome o ragione sociale' => $l->company,
                 'indirizzo' => $l->address,
@@ -822,7 +825,7 @@ class ExhibitorController extends Controller
                 'codice fiscale fatturazione' => $l->receiver_fiscal_code,
                 'partita iva fatturazione' => $l->receiver_vat_number,
                 'codice univoco fatturazione' => $l->receiver_uni_code,
-                'iscritto ad evento' => $l->orders_count > 0 ? 'si' : 'no',
+                'iscritto ad evento' => $l->n_events > 0 ? 'si' : 'no',
             ];
             array_push($to_export, $item);
         }
