@@ -806,7 +806,7 @@ class ExhibitorController extends Controller
                 'indirizzo' => $l->address,
                 'civico' => $l->civic_number,
                 'città' => $l->city,
-                'cap' => $l->cap,
+                'cap' => (string) $l->cap,
                 'provincia' => $l->province,
                 'telefono' => $l->phone,
                 'sito web' => $l->web,
@@ -814,18 +814,19 @@ class ExhibitorController extends Controller
                 'e-mail' => $l->email,
                 'telefono responsabile' => $l->phone_responsible,
                 'codice fiscale' => $l->fiscal_code,
-                'partita iva' => $l->vat_number,
-                'codice univoco' => $l->uni_code,
+                'partita iva' => (string) $l->vat_number,
+                'codice univoco' => (string) $l->uni_code,
                 'dati fatturazione diversi' => $l->diff_billing ? 'si' : 'no',
                 'indirizzo fatturazione' => $l->receiver_address,
                 'civico fatturazione' => $l->receiver_civic_number,
                 'città fatturazione' => $l->receiver_city,
-                'cap fatturazione' => $l->receiver_cap,
+                'cap fatturazione' => (string) $l->receiver_cap,
                 'provincia fatturazione' => $l->receiver_province,
                 'codice fiscale fatturazione' => $l->receiver_fiscal_code,
-                'partita iva fatturazione' => $l->receiver_vat_number,
-                'codice univoco fatturazione' => $l->receiver_uni_code,
+                'partita iva fatturazione' => (string) $l->receiver_vat_number,
+                'codice univoco fatturazione' => (string) $l->receiver_uni_code,
                 'iscritto ad evento' => $l->n_events > 0 ? 'si' : 'no',
+                'data iscrizione' => Carbon::parse($l->created_at)->format('d/m/Y'),
             ];
             array_push($to_export, $item);
         }
@@ -835,15 +836,6 @@ class ExhibitorController extends Controller
             ->addRows($to_export);
 
         return $csv->toBrowser();
-
-        // $stream = SimpleExcelWriter::streamDownload('Espositori.csv');
-        // $writer = $stream->getWriter();
-        
-        // $sheet = $writer->getCurrentSheet();
-        // $sheet->setName('Espositori');
-        // $stream->addRows($to_export);
-
-        // return $stream->toBrowser();
     }
 
     public function exportIncompleted()
@@ -869,19 +861,16 @@ class ExhibitorController extends Controller
             $item = [
                 'e-mail' => $l->email,
                 'lingua espositore' => $l->locale,
-                'data iscrizione' => Carbon::parse($l->created_at)->format('d/m/Y H:i:s'),
+                'data iscrizione' => Carbon::parse($l->created_at)->format('d/m/Y'),
             ];
             array_push($to_export, $item);
         }
 
-        $stream = SimpleExcelWriter::streamDownload('Espositori_incompleti.xlsx');
-        $writer = $stream->getWriter();
-        
-        $sheet = $writer->getCurrentSheet();
-        $sheet->setName('Espositori_incompleti');
-        $stream->addRows($to_export);
+        $csv = SimpleExcelWriter::streamDownload('Espositori_incompleti.csv')
+            ->addHeader(array_keys($to_export[0])) // Aggiungi l'intestazione basata sulle chiavi del primo elemento
+            ->addRows($to_export);
 
-        return $stream->toBrowser();
+        return $csv->toBrowser();
     }
 
     public function exportOrders($exhibitor_id)
