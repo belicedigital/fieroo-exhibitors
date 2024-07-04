@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 @section('title', $page->title)
 @section('title_header', $page->title)
 @section('content')
@@ -16,4 +16,26 @@
         </div>
     </div>
 </div>
+@endsection --}}
+
+@extends('layouts/layoutMaster')
+@section('title', $page->title)
+@section('title_header', $page->title)
+
+@section('path', trans('entities.exhibitors'))
+@section('current', $page->title)
+
+@section('content')
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">{{ $page->description }}</h5>
+                </div>
+                <div class="card-body">
+                    {!! $page->content !!}
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

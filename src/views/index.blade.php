@@ -1,9 +1,9 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 @section('title', trans('entities.exhibitors'))
 @section('title_header', trans('entities.exhibitors'))
-{{-- @section('buttons') --}}
-{{-- <a href="{{url('admin/export/exhibitors')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.export')}}"><i class="fas fa-file-export"></i></a> --}}
-{{-- @endsection --}}
+@section('buttons')
+<a href="{{url('admin/export/exhibitors')}}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom" title="{{trans('generals.export')}}"><i class="fas fa-file-export"></i></a>
+@endsection
 @section('content')
     <div class="container-fluid">
         <input type="hidden" name="visible"
@@ -18,7 +18,7 @@
                                     <th>{{ trans('tables.company') }}</th>
                                     <th>{{ trans('tables.email') }}</th>
                                     <th>{{ trans('tables.n_events') }}</th>
-                                    {{-- <th class="no-sort">{{trans('tables.is_admitted')}}</th> --}}
+                                    <th class="no-sort">{{trans('tables.is_admitted')}}</th>
                                     <th class="no-sort">{{ trans('tables.actions') }}</th>
                                 </tr>
                             </thead>
@@ -211,4 +211,391 @@
             });
         });
     </script>
+@endsection
+ --}}
+
+@extends('layouts/layoutMaster')
+
+@section('title', trans('entities.exhibitors'))
+@section('title_header', trans('entities.exhibitors'))
+
+@section('button')
+    <a href="{{ url('admin/export/exhibitors') }}" class="btn btn-primary h-75" data-toggle="tooltip" data-placement="bottom"
+        title="{{ trans('generals.export') }}"><i class="fas fa-file-export"></i></a>
+@endsection
+
+@section('path', trans('entities.exhibitors'))
+
+@section('content')
+    <input type="hidden" name="visible" value="{{ auth()->user()->roles->first()->name == 'super-admin' ? true : false }}">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body table-responsive p-3">
+                    <table id="expo-tab" class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>{{ trans('tables.company') }}</th>
+                                <th>{{ trans('tables.email') }}</th>
+                                <th>{{ trans('tables.n_events') }}</th>
+                                <th class="no-sort">{{ trans('tables.is_admitted') }}</th>
+                                <th class="no-sort">{{ trans('tables.actions') }}</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('vendor-style')
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/animate-css/animate.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/toastr/toastr.css') }}" />
+    <!-- Table -->
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/datatables-buttons-bs5/buttons.bootstrap5.css') }}">
+@endsection
+
+@section('vendor-script')
+    <script src="{{ asset('assets/vendor/libs/sweetalert2/sweetalert2.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/toastr/toastr.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js') }}"></script>
+@endsection
+
+@section('page-script')
+    <script>
+        const admit = (el, id) => {
+            common_request.get('/admin/exhibitor/' + id + '/admit')
+                .then(response => {
+                    let data = response.data
+                    if (data.status) {
+                        toastr.success(data.message, '', {
+                            onShown: function() {
+                                setTimeout(function() {
+                                    window.location.reload()
+                                }, 1000);
+                            }
+                        })
+                    } else {
+                        toastr.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    toastr.error(error)
+                    console.log(error)
+                    el.checked = false;
+                })
+        }
+
+        $(document).ready(function() {
+            $('#expo-tab').DataTable({
+                processing: true,
+                serverSide: true,
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": false,
+                "lengthMenu": [5, 10, 25, 50],
+                "pageLength": 10,
+                "language": {
+                    "search": "{{ trans('generals.search') }}",
+                    "paginate": {
+                        "first": "{{ trans('generals.start') }}",
+                        "previous": "«",
+                        "next": "»",
+                        "last": "{{ trans('generals.end') }}"
+                    }
+                },
+                ajax: {
+                    url: "{{ url('admin/exhibitors/getAjaxList') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    },
+                },
+                drawCallback: function() {
+                    $('[data-toggle="tooltip"]').tooltip()
+                    $('input[name="is_admitted"]').on('change', function(e) {
+                        let $this = $(this)
+                        let name = $(this).attr('name')
+                        if (name == 'is_admitted') {
+                            let exhibitor_id = $(this).closest('tr').data('exhibitor-id')
+                            Swal.fire({
+                                icon: 'info',
+                                title: "{!! trans('generals.confirm_admit') !!}",
+                                showCancelButton: true,
+                                confirmButtonText: "{{ trans('generals.confirm') }}",
+                                cancelButtonText: "{{ trans('generals.cancel') }}",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    admit($this, exhibitor_id);
+                                    $this.checked = true;
+                                } else {
+                                    $this.checked = false;
+                                }
+                            })
+                        }
+                    });
+
+                    $('form button').on('click', function(e) {
+                        var $this = $(this);
+                        e.preventDefault();
+                        Swal.fire({
+                            title: "{!! trans('generals.confirm_remove') !!}",
+                            showCancelButton: true,
+                            confirmButtonText: "{{ trans('generals.confirm') }}",
+                            cancelButtonText: "{{ trans('generals.cancel') }}",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $this.closest('form').submit();
+                            }
+                        })
+                    });
+                },
+                createdRow: function(row, data, index) {
+                    $(row).attr({
+                        'data-id': data['id'],
+                        'data-exhibitor-id': data['exhibitor_id']
+                    })
+                },
+                columns: [{
+                        data: 'company'
+                    },
+                    {
+                        data: 'email'
+                    },
+                    {
+                        data: 'n_events'
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let is_admitted = parseInt(row['is_admitted']);
+                            let yes = "{{ trans('generals.yes') }}";
+                            let no = "{{ trans('generals.no') }}";
+
+                            return `
+                                 <label class="switch switch-primary switch-sm me-0">
+                                     <input name="is_admitted" class="switch-input" type="checkbox"
+                                         ${is_admitted ? 'checked' : ''}
+                                         data-toggle="toggle" data-on="${yes}"
+                                         data-off="${no}" data-onstyle="success" data-offstyle="danger"
+                                         data-size="sm" ${is_admitted ? 'disabled' : ''}>
+                                     <span class="switch-toggle-slider">
+                                         <span class="switch-on"></span>
+                                         <span class="switch-off"></span>
+                                     </span>
+                                     <span class="switch-label"></span>
+                                 </label>
+                                 `;
+                        }
+                    },
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            let edit_href = "{{ url('admin/exhibitors/') }}/" + row['id'] + '/edit'
+                            let brands_href = "{{ url('admin/exhibitor/') }}/" + row[
+                                'exhibitor_id'] + '/brands'
+                            let stands_href = "{{ url('admin/exhibitor/') }}/" + row[
+                                'exhibitor_id'] + '/stands'
+                            let events_href = "{{ url('admin/exhibitor/') }}/" + row[
+                                'exhibitor_id'] + '/events'
+                            let pdf_href = "{{ url('admin/exhibitor/') }}/" + row['exhibitor_id'] +
+                                '/send-pdf'
+                            let furnishings_href = "{{ url('admin/exhibitor/') }}/" + row[
+                                'exhibitor_id'] + '/send-prompt-furnishings'
+                            let catalog_href = "{{ url('admin/exhibitor/') }}/" + row[
+                                'exhibitor_id'] + '/send-prompt-catalog'
+                            let show_href = "{{ url('admin/exhibitors/') }}/" + row['id'] + '/show'
+                            let destroy_href = '{{ route('exhibitors.destroy', ':id') }}';
+                            destroy_href = destroy_href.replace(':id', row['id']);
+                            let show_event_btn = row['n_events'] > 0 ? '' : 'd-none'
+                            return `
+                   <div class="btn-group" role="group">
+                       <div class="btn-group">
+                           @if (auth()->user()->roles->first()->name == 'super-admin')
+                             <a data-toggle="tooltip" data-placement="top" title="{{ trans('generals.edit') }}" href=${edit_href} class="btn btn-default"><i class="fa fa-edit"></i></a>
+                             <a data-toggle="tooltip" data-placement="top" title="{{ trans('entities.events') }}" href=${events_href} class="btn btn-default ${show_event_btn}"><i class="fas fa-calendar-check"></i></a>
+                           @endif
+                       </div>
+                       @if (auth()->user()->roles->first()->name == 'super-admin')
+                       <form action=${destroy_href} method="POST">
+                           @csrf
+                           @method('DELETE')
+                           <button data-toggle="tooltip" data-placement="top" title="{{ trans('generals.delete') }}" class="btn btn-default" type="submit"><i class="fa fa-trash"></i></button>
+                       </form>
+                       @endif
+                   </div>
+                   `
+                        }
+                    }
+
+                ],
+                columnDefs: [{
+                    orderable: false,
+                    targets: "no-sort"
+                }],
+                "oLanguage": {
+                    "sSearch": "{{ trans('generals.search') }}",
+                    "oPaginate": {
+                        "sFirst": "{{ trans('generals.start') }}", // This is the link to the first page
+                        "sPrevious": "«", // This is the link to the previous page
+                        "sNext": "»", // This is the link to the next page
+                        "sLast": "{{ trans('generals.end') }}" // This is the link to the last page
+                    }
+                }
+            });
+        });
+    </script>
+@endsection
+
+@section('esempio')
+    <div class="card">
+        <div class="card-datatable table-responsive pt-0">
+            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
+                <div class="card-header flex-column flex-md-row">
+                    <div class="head-label text-center">
+                        <h5 class="card-title mb-0">DataTable with Buttons</h5>
+                    </div>
+                    <div class="dt-action-buttons text-end pt-3 pt-md-0">
+                        <div class="dt-buttons btn-group flex-wrap">
+                            <div class="btn-group">
+                                <button
+                                    class="btn btn-secondary buttons-collection dropdown-toggle btn-label-primary me-2 waves-effect waves-light"
+                                    tabindex="0" aria-controls="DataTables_Table_0" type="button" aria-haspopup="dialog"
+                                    aria-expanded="false">
+                                    <span>
+                                        <i class="ti ti-file-export me-sm-1"></i>
+                                        <span class="d-none d-sm-inline-block">Export</span>
+                                    </span><span class="dt-down-arrow">
+                                    </span>
+                                </button>
+                            </div>
+                            <button class="btn btn-secondary create-new btn-primary waves-effect waves-light" tabindex="0"
+                                aria-controls="DataTables_Table_0" type="button">
+                                <span>
+                                    <i class="ti ti-plus me-sm-1"></i>
+                                    <span class="d-none d-sm-inline-block">Add New Record</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="dataTables_length" id="DataTables_Table_0_length">
+                            <label>Show
+                                <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0"
+                                    class="form-select">
+                                    <option value="7">7</option>
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="75">75</option>
+                                    <option value="100">100</option>
+                                </select> entries</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+                        <div id="DataTables_Table_0_filter" class="dataTables_filter">
+                            <label>Search:<input type="search" class="form-control" placeholder=""
+                                    aria-controls="DataTables_Table_0"></label>
+                        </div>
+                    </div>
+                </div>
+                <table class="datatables-basic table dataTable no-footer dtr-column" id="DataTables_Table_0"
+                    aria-describedby="DataTables_Table_0_info" style="width: 1163px;">
+                    <thead>
+                        <tr>
+                            <th class="control sorting_disabled dtr-hidden" rowspan="1" colspan="1"
+                                style="width: 0px; display: none;" aria-label=""></th>
+                            <th class="sorting_disabled dt-checkboxes-cell dt-checkboxes-select-all" rowspan="1"
+                                colspan="1" style="width: 18px;" data-col="1" aria-label="">
+                                <input type="checkbox" class="form-check-input">
+                            </th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                colspan="1" style="width: 260px;" aria-label="Name: activate to sort column ascending">
+                                Name
+                            </th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                colspan="1" style="width: 246px;"
+                                aria-label="Email: activate to sort column ascending">
+                                Email
+                            </th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                colspan="1" style="width: 83px;" aria-label="Date: activate to sort column ascending">
+                                Date
+                            </th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                colspan="1" style="width: 81px;"
+                                aria-label="Salary: activate to sort column ascending">
+                                Salary
+                            </th>
+                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                colspan="1" style="width: 98px;"
+                                aria-label="Status: activate to sort column ascending">
+                                Status
+                            </th>
+                            <th class="sorting_disabled" rowspan="1" colspan="1" style="width: 71px;"
+                                aria-label="Actions">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="odd">
+                            <td class="  control" tabindex="0" style="display: none;"></td>
+                            <td class="  dt-checkboxes-cell">
+                                <input type="checkbox" class="dt-checkboxes form-check-input">
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-start align-items-center user-name">
+                                    <div class="avatar-wrapper">
+                                        <div class="avatar me-2">
+                                            <span class="avatar-initial rounded-circle bg-label-danger">GG</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <span class="emp_name text-truncate">Glyn Giacoppo</span>
+                                        <small class="emp_post text-truncate text-muted">Software Test Engineer</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>ggiacoppo2r@apache.org</td>
+                            <td>04/15/2021</td>
+                            <td>$24973.48</td>
+                            <td>
+                                <span class="badge  bg-label-success">Professional</span>
+                            </td>
+                            <td>
+                                <div class="d-inline-block">
+                                    <a href="javascript:;" class="btn btn-sm btn-icon dropdown-toggle hide-arrow"
+                                        data-bs-toggle="dropdown">
+                                        <i class="text-primary ti ti-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end m-0">
+                                        <li><a href="javascript:;" class="dropdown-item">Details</a></li>
+                                        <li><a href="javascript:;" class="dropdown-item">Archive</a></li>
+                                        <div class="dropdown-divider"></div>
+                                        <li><a href="javascript:;"
+                                                class="dropdown-item text-danger delete-record">Delete</a></li>
+                                    </ul>
+                                </div>
+                                <a href="javascript:;" class="btn btn-sm btn-icon item-edit">
+                                    <i class="text-primary ti ti-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection
