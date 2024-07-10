@@ -376,29 +376,29 @@
                     {
                         data: 'n_events'
                     },
-                    {
-                        data: null,
-                        render: function(data, type, row) {
-                            let is_admitted = parseInt(row['is_admitted']);
-                            let yes = "{{ trans('generals.yes') }}";
-                            let no = "{{ trans('generals.no') }}";
+                    // {
+                    //     data: null,
+                    //     render: function(data, type, row) {
+                    //         let is_admitted = parseInt(row['is_admitted']);
+                    //         let yes = "{{ trans('generals.yes') }}";
+                    //         let no = "{{ trans('generals.no') }}";
 
-                            return `
-                                 <label class="switch switch-primary switch-sm me-0">
-                                     <input name="is_admitted" class="switch-input" type="checkbox"
-                                         ${is_admitted ? 'checked' : ''}
-                                         data-toggle="toggle" data-on="${yes}"
-                                         data-off="${no}" data-onstyle="success" data-offstyle="danger"
-                                         data-size="sm" ${is_admitted ? 'disabled' : ''}>
-                                     <span class="switch-toggle-slider">
-                                         <span class="switch-on"></span>
-                                         <span class="switch-off"></span>
-                                     </span>
-                                     <span class="switch-label"></span>
-                                 </label>
-                                 `;
-                        }
-                    },
+                    //         return `
+                //              <label class="switch switch-primary switch-sm me-0">
+                //                  <input name="is_admitted" class="switch-input" type="checkbox"
+                //                      ${is_admitted ? 'checked' : ''}
+                //                      data-toggle="toggle" data-on="${yes}"
+                //                      data-off="${no}" data-onstyle="success" data-offstyle="danger"
+                //                      data-size="sm" ${is_admitted ? 'disabled' : ''}>
+                //                  <span class="switch-toggle-slider">
+                //                      <span class="switch-on"></span>
+                //                      <span class="switch-off"></span>
+                //                  </span>
+                //                  <span class="switch-label"></span>
+                //              </label>
+                //              `;
+                    //     }
+                    // },
                     {
                         data: null,
                         render: function(data, type, row) {
