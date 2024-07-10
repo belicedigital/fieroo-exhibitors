@@ -207,9 +207,11 @@
 @section('title', trans('crud.new', ['obj' => trans('entities.exhibitor')]))
 @section('title_header', trans('crud.new', ['obj' => trans('entities.exhibitor')]))
 
-@section('buttons')
-    <a href="{{ url('admin/exhibitors') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
-        title="{{ trans('generals.back') }}"><i class="fas fa-chevron-left"></i></a>
+@section('button')
+    <a href="{{ url('admin/exhibitors') }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="bottom"
+        data-bs-original-title="{{ trans('generals.back') }}"><i class="fas fa-chevron-left"></i></a>
+    {{-- <a href="{{ url('admin/exhibitors') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
+        title="{{ trans('generals.back') }}"><i class="fas fa-chevron-left"></i></a> --}}
 @endsection
 
 @section('path', trans('entities.exhibitors'))

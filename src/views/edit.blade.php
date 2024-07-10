@@ -223,9 +223,11 @@
 @extends('layouts/layoutMaster')
 @section('title', trans('entities.exhibitor') . ' ' . $exhibitor->company)
 @section('title_header', trans('entities.exhibitor') . ' ' . $exhibitor->company)
-@section('buttons')
-    <a href="{{ url('admin/exhibitors') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
-        title="{{ trans('generals.back') }}"><i class="fas fa-chevron-left"></i></a>
+@section('button')
+    <a href="{{ url('admin/exhibitors') }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="bottom"
+        data-bs-original-title="{{ trans('generals.back') }}"><i class="fas fa-chevron-left"></i></a>
+    {{-- <a href="{{ url('admin/exhibitors') }}" class="btn btn-primary" data-toggle="tooltip" data-placement="bottom"
+        title="{{ trans('generals.back') }}"><i class="fas fa-chevron-left"></i></a> --}}
 @endsection
 
 @section('path', trans('entities.exhibitors'))
@@ -441,8 +443,6 @@
                             <div class="d-flex align-items-center justify-content-end">
                                 <button type="submit"
                                     class="btn btn-primary me-sm-3 me-1">{{ trans('generals.save') }}</button>
-                                <a href="{{ url('admin/exhibitors') }}"
-                                    class="btn btn-label-secondary">{{ trans('generals.cancel') }}</a>
                             </div>
                         </div>
                     </form>

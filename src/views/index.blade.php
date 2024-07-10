@@ -220,8 +220,10 @@
 @section('title_header', trans('entities.exhibitors'))
 
 @section('button')
-    <a href="{{ url('admin/export/exhibitors') }}" class="btn btn-primary h-75" data-toggle="tooltip" data-placement="bottom"
-        title="{{ trans('generals.export') }}"><i class="fas fa-file-export"></i></a>
+    <a href="{{ url('admin/export/exhibitors') }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="bottom"
+        data-bs-original-title="{{ trans('generals.export') }}"><i class="fas fa-file-export"></i></a>
+    {{-- <a href="{{ url('admin/export/exhibitors') }}" class="btn btn-primary h-75" data-toggle="tooltip" data-placement="bottom"
+        title="{{ trans('generals.export') }}"><i class="fas fa-file-export"></i></a> --}}
 @endsection
 
 @section('path', trans('entities.exhibitors'))
