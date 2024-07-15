@@ -164,7 +164,7 @@ class ExhibitorController extends Controller
                 'body' => $body
             ];
 
-            Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from) {
+            Mail::send('bootstrapper::emails.form-data', ['data' => $data], function ($m) use ($email_from) {
                 $m->from($email_from, 'Espositore - Pending');
                 $m->to(env('MAIL_ADMIN'))->subject('Espositore in attesa di ammissione');
             });
@@ -749,7 +749,7 @@ class ExhibitorController extends Controller
             //     $m->from($email_from, env('MAIL_FROM_NAME'));
             //     $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
             // });
-            Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
+            Mail::send('bootstrapper::emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
                 $m->from($email_from, env('MAIL_FROM_NAME'));
                 $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
             });
@@ -763,7 +763,7 @@ class ExhibitorController extends Controller
             $data = [
                 'body' => $body
             ];
-            Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from) {
+            Mail::send('bootstrapper::emails.form-data', ['data' => $data], function ($m) use ($email_from) {
                 $m->from($email_from, 'Espositore - Ammissione');
                 $m->to(env('MAIL_ADMIN'))->subject('Notifica Ammissione Espositore');
             });
@@ -1018,7 +1018,7 @@ class ExhibitorController extends Controller
             $email_from = env('MAIL_FROM_ADDRESS');
             $email_to = $user->email;
             $subject = trans('emails.remarketing_exhibitor', [], $exhibitor->locale);
-            Mail::send('emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
+            Mail::send('bootstrapper::emails.form-data', ['data' => $data], function ($m) use ($email_from, $email_to, $subject) {
                 $m->from($email_from, env('MAIL_FROM_NAME'));
                 $m->to($email_to)->subject(env('APP_NAME').' '.$subject);
             });
