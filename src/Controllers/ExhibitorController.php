@@ -755,18 +755,18 @@ class ExhibitorController extends Controller
             });
 
             // send notification to admin
-            $body = formatDataForEmail([
-                'responsible' => $exhibitor_data->responsible,
-                'company' => $exhibitor_data->company,
-            ], $setting->email_to_admin_notification_admit);
+            // $body = formatDataForEmail([
+            //     'responsible' => $exhibitor_data->responsible,
+            //     'company' => $exhibitor_data->company,
+            // ], $setting->email_to_admin_notification_admit);
 
-            $data = [
-                'body' => $body
-            ];
-            Mail::send('bootstrapper::emails.form-data', ['data' => $data], function ($m) use ($email_from) {
-                $m->from($email_from, 'Espositore - Ammissione');
-                $m->to(env('MAIL_ADMIN'))->subject('Notifica Ammissione Espositore');
-            });
+            // $data = [
+            //     'body' => $body
+            // ];
+            // Mail::send('bootstrapper::emails.form-data', ['data' => $data], function ($m) use ($email_from) {
+            //     $m->from($email_from, 'Espositore - Ammissione');
+            //     $m->to(env('MAIL_ADMIN'))->subject('Notifica Ammissione Espositore');
+            // });
 
             $response['status'] = true;
             $response['message'] = trans('generals.admit_success');
