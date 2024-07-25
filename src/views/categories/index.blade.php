@@ -28,7 +28,7 @@
                             @foreach ($list as $l)
                                 <tr>
                                     <td>{{ $l->name }}</td>
-                                    <td>{{ url('/register/' . Str::of($l->name)->snake()) }}</td>
+                                    <td>{{ url('/register/' . Str::of($l->name)->slug('-')) }}</td>
                                     <td>{{ $l->is_active ? trans('generals.yes') : trans('generals.no') }}</td>
                                     <td>
                                         <div class="btn-group btn-group" role="group">
