@@ -19,6 +19,7 @@
                         <thead>
                             <tr>
                                 <th>{{ trans('tables.name') }}</th>
+                                <th>{{ trans('tables.url') }}</th>
                                 <th>{{ trans('tables.is_active') }}</th>
                                 <th class="no-sort">{{ trans('tables.actions') }}</th>
                             </tr>
@@ -27,6 +28,7 @@
                             @foreach ($list as $l)
                                 <tr>
                                     <td>{{ $l->name }}</td>
+                                    <td>{{ url('/register/' . Str::of($l->name)->snake()) }}</td>
                                     <td>{{ $l->is_active ? trans('generals.yes') : trans('generals.no') }}</td>
                                     <td>
                                         <div class="btn-group btn-group" role="group">
