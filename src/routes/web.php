@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Fieroo\Exhibitors\Controllers\ExhibitorController;
+use Fieroo\Exhibitors\Controllers\CategoryController;
 
 Route::group(['middleware' => ['web','auth']], function() {
     Route::get('/compile-data', [ExhibitorController::class, 'compileData'])->name('compile-data-after-login');
@@ -26,5 +27,7 @@ Route::group(['middleware' => ['web','auth']], function() {
             Route::get('/exhibitors-incomplete', [ExhibitorController::class, 'exportIncompleted']);
             Route::get('/exhibitor/{id}/orders', [ExhibitorController::class, 'exportOrders']);
         });
+
+        Route::resource('/categories', CategoryController::class);
     });
 });

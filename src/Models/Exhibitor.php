@@ -5,6 +5,7 @@ namespace Fieroo\Exhibitors\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Fieroo\Exhibitors\Models\ExhibitorDetail;
+use Fieroo\Exhibitors\Models\Category;
 use Fieroo\Bootstrapper\Models\User;
 use Laravel\Cashier\Billable;
 
@@ -27,5 +28,10 @@ class Exhibitor extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }
