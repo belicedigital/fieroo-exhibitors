@@ -239,6 +239,7 @@
                             <tr>
                                 <th>{{ trans('tables.company') }}</th>
                                 <th>{{ trans('tables.email') }}</th>
+                                <th>{{ trans('tables.category') }}</th>
                                 <th>{{ trans('tables.n_events') }}</th>
                                 {{-- <th class="no-sort">{{ trans('tables.is_admitted') }}</th> --}}
                                 <th class="no-sort">{{ trans('tables.actions') }}</th>
@@ -372,6 +373,9 @@
                     },
                     {
                         data: 'email'
+                    },
+                    {
+                        data: 'category_name'
                     },
                     {
                         data: 'n_events'
