@@ -29,5 +29,6 @@ Route::group(['middleware' => ['web','auth']], function() {
         });
 
         Route::resource('/categories', CategoryController::class);
+        Route::post('/categories/getSelectList', [CategoryController::class, 'getSelectList']);
     });
 });

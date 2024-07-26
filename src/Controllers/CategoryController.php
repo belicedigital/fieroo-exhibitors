@@ -143,4 +143,20 @@ class CategoryController extends Controller
         $entity_name = trans('entities.category');
         return redirect('admin/categories')->with('success', trans('forms.deleted_success',['obj' => $entity_name]));
     }
+
+    public function getSelectList()
+    {
+        $response = [
+            'status' => false
+        ];
+
+        try {
+            $response['status'] = true;
+            $response['data'] = Category::where('is_active',true)->get();
+            return response()->json($response);
+        } catch(\Exception $e){
+            $response['message'] = $e->getMessage();
+            return response()->json($response);
+        }
+    }
 }
