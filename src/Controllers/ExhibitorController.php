@@ -336,6 +336,7 @@ class ExhibitorController extends Controller
                     ['user_id','=',$record->user_id],
                     ['type_of_payment','=','subscription']
                 ])->count(),
+                'category_name' => $record->category_name,
             );
         }
 
