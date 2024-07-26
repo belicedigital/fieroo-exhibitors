@@ -242,14 +242,13 @@ class ExhibitorController extends Controller
         $__records = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
-            ->leftJoin('categories', 'exhibitors.category_id', '=', 'categories.id')
             ->where(function($query) use ($searchValue){
                 $query->where('users.email', 'LIKE', '%'.$searchValue.'%');
             })
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
             ->take($rowperpage)
-            ->select('exhibitors.*', 'users.email as email', 'categories.name as category_name')
+            ->select('exhibitors.*', 'users.email as email')
             ->get()
             ->toArray();
 
@@ -312,6 +311,7 @@ class ExhibitorController extends Controller
         $records = DB::table('exhibitors_data')
             ->leftJoin('exhibitors', 'exhibitors_data.exhibitor_id', '=', 'exhibitors.id')
             ->leftJoin('users', 'exhibitors.user_id', '=', 'users.id')
+            ->leftJoin('categories', 'exhibitors.category_id', '=', 'categories.id')
             ->where(function($query) use ($searchValue){
                 $query->where('users.email', 'LIKE', '%'.$searchValue.'%')
                       ->orWhere('exhibitors_data.company', 'LIKE', '%'.$searchValue.'%');
@@ -319,7 +319,7 @@ class ExhibitorController extends Controller
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
             ->take($rowperpage)
-            ->select('exhibitors_data.*', 'users.email as email', 'users.id as user_id')
+            ->select('exhibitors_data.*', 'users.email as email', 'users.id as user_id', 'categories.name as category_name')
             ->get();
 
         $data_arr = array();
