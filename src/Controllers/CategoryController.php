@@ -118,6 +118,7 @@ class CategoryController extends Controller
         }
 
         try {
+            dd('ciao');
             $category = Category::findOrFail($id);
             $category->name = $request->name;
             $category->slug = Str::slug($request->name,'-');
