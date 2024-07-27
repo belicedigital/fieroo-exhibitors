@@ -17,7 +17,18 @@ class Exhibitor extends Model
 
     protected $fillable = [
         'user_id',
-        'locale'
+        'category_id',
+        'locale',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'user_id' => 'integer',
+        'category_id' => 'integer',
     ];
 
     public function detail()
