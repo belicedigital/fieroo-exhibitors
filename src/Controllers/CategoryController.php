@@ -4,6 +4,7 @@ namespace Fieroo\Exhibitors\Controllers;
 
 use Fieroo\Exhibitors\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use Validator;
 
@@ -55,6 +56,7 @@ class CategoryController extends Controller
         try {
             $category = Category::create([
                 'name' => $request->name,
+                'slug' => Str::slug($request->name,'-'),
                 'is_active' => $request->is_active ? true : false,
             ]);
 
@@ -118,6 +120,7 @@ class CategoryController extends Controller
         try {
             $category = Category::findOrFail($id);
             $category->name = $request->name;
+            $category->slug = Str::slug($request->name,'-');
             $category->is_active = $request->is_active ? true : false;
             $category->save();
 

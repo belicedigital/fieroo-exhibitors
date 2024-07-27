@@ -319,7 +319,7 @@ class ExhibitorController extends Controller
             ->orderBy($columnName, $columnSortOrder)
             ->skip($start)
             ->take($rowperpage)
-            ->select('exhibitors_data.*', 'users.email as email', 'users.id as user_id', 'categories.name as category_name')
+            ->select('exhibitors_data.*', 'users.email as email', 'users.id as user_id', 'categories.slug as category_name')
             ->get();
 
         $data_arr = array();

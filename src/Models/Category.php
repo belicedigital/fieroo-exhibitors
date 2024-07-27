@@ -11,6 +11,7 @@ class Category extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'is_active',
     ];
 
@@ -21,6 +22,7 @@ class Category extends Model
      */
     protected $casts = [
         'name' => 'string',
+        'slug' => 'string',
         'is_active' => 'boolean',
     ];
 
