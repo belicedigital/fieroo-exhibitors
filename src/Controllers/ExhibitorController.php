@@ -422,7 +422,7 @@ class ExhibitorController extends Controller
             'amount' => $amount,
             'stand_name' => $stand_trans->name,
             'iva' => $settings->iva,
-            'back_url' => 'admin/exhibitor/'.$exhibitor_id.'/events'
+            'back_url' => url('admin/exhibitor/'.$exhibitor_id.'/events'),
         ]);
     }
 
